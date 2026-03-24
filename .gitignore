@@ -1,0 +1,8 @@
+node_modules/
+.env
+uploads/blocks/
+uploads/stego/
+uploads/files/
+coverage/
+*.log
+.terraform/

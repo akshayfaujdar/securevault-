@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SecureVault — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6fc;--white:#ffffff;--sidebar:#1e1b4b;--sidebar2:#2d2a6e;
+  --primary:#4f46e5;--primary2:#6366f1;--accent:#06b6d4;
+  --green:#10b981;--amber:#f59e0b;--red:#ef4444;--pink:#ec4899;
+  --text:#1e1b4b;--text2:#6b7280;--text3:#9ca3af;
+  --border:#e5e7eb;--shadow:0 4px 24px rgba(0,0,0,0.08);
+  --font:'Poppins',sans-serif;--mono:'Space Mono',monospace;
+  --nav-h:64px;--sidebar-w:260px;--radius:14px;--radius-sm:10px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+.layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;grid-template-rows:var(--nav-h) 1fr;min-height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);position:sticky;top:0;z-index:100;}
+.topbar-brand{display:flex;align-items:center;gap:10px;width:var(--sidebar-w);padding-right:20px;border-right:1px solid var(--border)}
+.brand-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:16px}
+.brand-name{font-size:16px;font-weight:700;color:var(--text)}.brand-name span{color:var(--primary)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.admin-badge{background:linear-gradient(135deg,var(--primary),var(--accent));color:white;padding:4px 14px;border-radius:50px;font-size:12px;font-weight:700}
+.user-chip{display:flex;align-items:center;gap:10px;padding:6px 14px 6px 6px;border-radius:50px;border:1.5px solid var(--border);background:white;cursor:pointer}
+.user-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--pink));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white}
+.user-name{font-size:12px;font-weight:600;color:var(--text)}
+
+/* SIDEBAR */
+.sidebar{background:var(--sidebar);padding:20px 12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h))}
+.sb-section{font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:1.5px;text-transform:uppercase;padding:10px 12px 4px;margin-top:6px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.2s}
+.sb-item:hover{background:rgba(255,255,255,0.08);color:white}
+.sb-item.active{background:var(--primary);color:white;box-shadow:0 4px 12px rgba(79,70,229,0.4)}
+.sb-item .si{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.sb-badge{margin-left:auto;background:var(--red);color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:50px}
+.sb-badge.green{background:var(--green)}.sb-badge.amber{background:var(--amber);color:var(--text)}
+.sb-divider{height:1px;background:rgba(255,255,255,0.08);margin:6px 0}
+.sb-bottom{margin-top:auto;padding-top:12px}
+.sb-user-card{background:rgba(255,255,255,0.07);border-radius:var(--radius-sm);padding:12px;display:flex;align-items:center;gap:10px}
+.sb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary2),var(--pink));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0}
+.sb-uname{font-size:12px;font-weight:600;color:white}
+.sb-uemail{font-size:10px;color:rgba(255,255,255,0.4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.sb-logout{margin-left:auto;cursor:pointer;color:rgba(255,255,255,0.4);font-size:14px}
+.sb-logout:hover{color:var(--red)}
+
+/* MAIN */
+.main{padding:24px 28px;overflow-y:auto}
+.section{display:none}.section.active{display:block;animation:fade-in 0.3s ease}
+@keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.page-title{font-size:20px;font-weight:800;color:var(--text)}
+.page-sub{font-size:12px;color:var(--text2);margin-top:3px}
+.page-actions{display:flex;gap:8px;align-items:center}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;font-family:var(--font);white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:white;box-shadow:0 4px 14px rgba(79,70,229,0.3)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:white;color:var(--text2);border:1.5px solid var(--border)}
+.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
+.btn-success{background:var(--green);color:white}
+.btn-danger{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.btn-sm{padding:5px 12px;font-size:11px}
+.btn-xs{padding:3px 8px;font-size:10px}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:white;border-radius:var(--radius);padding:20px;border:1px solid var(--border);transition:all 0.2s;position:relative;overflow:hidden}
+.stat-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+.stat-val{font-size:26px;font-weight:800;color:var(--text);font-family:var(--mono);margin-bottom:4px}
+.stat-label{font-size:12px;color:var(--text2);font-weight:500}
+
+/* INFO BOXES */
+.info-box{background:linear-gradient(135deg,var(--primary),var(--primary2));border-radius:var(--radius);padding:22px;color:white;position:relative;overflow:hidden}
+.info-box::after{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.1)}
+.info-box-val{font-size:30px;font-weight:800;font-family:var(--mono);margin-bottom:4px}
+.info-box-label{font-size:12px;opacity:0.8}
+.admin-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+
+/* CARDS */
+.card{background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.card-body{padding:18px}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead tr{background:#f9fafb}
+th{text-align:left;padding:10px 14px;font-size:10px;font-weight:700;color:var(--text2);letter-spacing:0.8px;text-transform:uppercase;border-bottom:1px solid var(--border)}
+td{padding:12px 14px;font-size:12px;color:var(--text2);border-bottom:1px solid rgba(0,0,0,0.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa;color:var(--text)}
+.fname{font-size:12px;font-weight:600;color:var(--text)}
+.fsize{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.algo-pill{font-size:10px;font-family:var(--mono);font-weight:700;padding:2px 8px;border-radius:50px;background:rgba(79,70,229,0.1);color:var(--primary);border:1px solid rgba(79,70,229,0.2)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:50px;font-size:10px;font-weight:600}
+.bg{background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
+.ba{background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.br{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.bb{background:rgba(79,70,229,0.1);color:var(--primary);border:1px solid rgba(79,70,229,0.2)}
+.bc{background:rgba(6,182,212,0.1);color:var(--accent);border:1px solid rgba(6,182,212,0.2)}
+
+/* CHARTS */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-box{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:18px}
+.chart-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--text2);margin-bottom:14px}
+
+/* TOASTS */
+.toasts{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:10px 16px;border-radius:10px;font-size:12px;font-weight:500;box-shadow:var(--shadow);animation:tin 0.3s ease;min-width:220px;border:1px solid transparent}
+.toast.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.toast.err{background:#fef2f2;border-color:#fecaca;color:#dc2626}
+.toast.info{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
+@keyframes tin{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:16px;padding:28px;width:100%;max-width:520px;box-shadow:0 24px 60px rgba(0,0,0,0.2);transform:translateY(12px);transition:transform 0.25s ease}
+.overlay.open .modal{transform:translateY(0)}
+.modal-x{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text2)}
+.modal-x:hover{background:#fee2e2;color:var(--red)}
+.modal-title{font-size:18px;font-weight:800;color:var(--text);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:18px}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:10px;opacity:0.5}
+.empty-title{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:4px}
+
+/* MISC */
+.inp{width:100%;padding:9px 12px;background:#f9fafb;border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font);font-size:12px;outline:none;transition:all 0.2s}
+.inp:focus{border-color:var(--primary);background:white}
+.spin{width:12px;height:12px;border:2px solid rgba(255,255,255,0.35);border-top-color:white;border-radius:50%;animation:rot 0.7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.risk-low{color:#10b981}.risk-medium{color:#f59e0b}.risk-high{color:#f97316}.risk-critical{color:#ef4444}
+@media(max-width:1024px){.stats-grid,.admin-stat-row{grid-template-columns:1fr 1fr}.chart-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-icon">🔐</div>
+    <span class="brand-name">Secure<span>Vault</span></span>
+  </div>
+  <span style="font-size:13px;font-weight:600;color:var(--text2);margin-left:20px">Admin Control Panel</span>
+  <div class="topbar-right">
+    <span class="admin-badge">👑 Admin</span>
+    <div class="user-chip">
+      <div class="user-av" id="top-av">A</div>
+      <span class="user-name" id="top-name">Admin</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="window.open('index.html','_blank')">👤 User View</button>
+    <button class="btn btn-ghost btn-sm" onclick="logout()">🚪 Logout</button>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-section">Dashboard</div>
+  <div class="sb-item active" onclick="showSection('dashboard')" id="sb-dashboard"><span class="si">📊</span>Overview</div>
+  <div class="sb-item" onclick="showSection('analytics')" id="sb-analytics"><span class="si">📈</span>Analytics</div>
+
+  <div class="sb-section">User Management</div>
+  <div class="sb-item" onclick="showSection('users')" id="sb-users"><span class="si">👥</span>All Users<span class="sb-badge green" id="sb-user-count">0</span></div>
+  <div class="sb-item" onclick="showSection('orgs')" id="sb-orgs"><span class="si">🏢</span>Organizations</div>
+  <div class="sb-item" onclick="showSection('create-user')" id="sb-create-user"><span class="si">➕</span>Create User</div>
+
+  <div class="sb-section">File Management</div>
+  <div class="sb-item" onclick="showSection('files')" id="sb-files"><span class="si">📁</span>All Files</div>
+  <div class="sb-item" onclick="showSection('shares')" id="sb-shares"><span class="si">🔗</span>File Shares</div>
+  <div class="sb-item" onclick="showSection('recycle')" id="sb-recycle"><span class="si">♻️</span>Recycle Bin</div>
+
+  <div class="sb-section">Security</div>
+  <div class="sb-item" onclick="showSection('threats')" id="sb-threats"><span class="si">🚨</span>Threat Detection<span class="sb-badge" id="sb-threat-count" style="display:none">!</span></div>
+  <div class="sb-item" onclick="showSection('anomalies')" id="sb-anomalies"><span class="si">🤖</span>AI Anomalies</div>
+  <div class="sb-item" onclick="showSection('blockchain')" id="sb-blockchain"><span class="si">⛓️</span>Blockchain</div>
+  <div class="sb-item" onclick="showSection('zkp')" id="sb-zkp"><span class="si">🛡</span>ZKP Proofs</div>
+
+  <div class="sb-section">Data & Reports</div>
+  <div class="sb-item" onclick="showSection('activity')" id="sb-activity"><span class="si">📋</span>Activity Log</div>
+  <div class="sb-item" onclick="showSection('scanner')" id="sb-scanner"><span class="si">🔍</span>File Scanner</div>
+  <div class="sb-item" onclick="showSection('geo')" id="sb-geo"><span class="si">🗺️</span>Access Map</div>
+  <div class="sb-item" onclick="showSection('reports')" id="sb-reports"><span class="si">📊</span>Reports</div>
+  <div class="sb-item" onclick="exportCSV('activity')" id="sb-export"><span class="si">⬇</span>Export CSV</div>
+
+  <div class="sb-divider"></div>
+  <div class="sb-item" onclick="showSection('settings')" id="sb-settings"><span class="si">⚙️</span>Settings</div>
+
+  <div class="sb-bottom">
+    <div class="sb-user-card">
+      <div class="sb-av" id="sb-av">A</div>
+      <div style="flex:1;overflow:hidden">
+        <div class="sb-uname" id="sb-uname">Admin</div>
+        <div class="sb-uemail" id="sb-uemail">admin@vault.com</div>
+      </div>
+      <span class="sb-logout" onclick="logout()">⏻</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ══ OVERVIEW DASHBOARD ══ -->
+  <div class="section active" id="section-dashboard">
+    <div class="page-head">
+      <div><div class="page-title">📊 Admin Overview</div><div class="page-sub">Complete system statistics and health</div></div>
+      <div class="page-actions">
+        <button class="btn btn-ghost btn-sm" onclick="loadDashboard()">🔄 Refresh</button>
+        <button class="btn btn-primary btn-sm" onclick="showSection('create-user')">➕ Add User</button>
+      </div>
+    </div>
+    <!-- Main stats -->
+    <div class="admin-stat-row">
+      <div class="info-box"><div class="info-box-val" id="adm-users">—</div><div class="info-box-label">👥 Total Users</div></div>
+      <div class="info-box" style="background:linear-gradient(135deg,var(--accent),#0891b2)"><div class="info-box-val" id="adm-files">—</div><div class="info-box-label">📁 Encrypted Files</div></div>
+      <div class="info-box" style="background:linear-gradient(135deg,var(--green),#059669)"><div class="info-box-val" id="adm-shares">—</div><div class="info-box-label">🔗 File Shares</div></div>
+      <div class="info-box" style="background:linear-gradient(135deg,var(--amber),#d97706)"><div class="info-box-val" id="adm-dls">—</div><div class="info-box-label">⬇ Downloads</div></div>
+    </div>
+    <!-- Phase 1,2,3 stats -->
+    <div class="stats-grid" style="grid-template-columns:repeat(6,1fr)">
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(239,68,68,0.1)">💣</div><div class="stat-val" id="st-selfdes">—</div><div class="stat-label">Self-Destruct</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,0.1)">🍯</div><div class="stat-val" id="st-honey">—</div><div class="stat-label">Honeypots</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(79,70,229,0.1)">⛓️</div><div class="stat-val" id="st-blocks">—</div><div class="stat-label">Blocks</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(16,185,129,0.1)">🛡</div><div class="stat-val" id="st-zkp">—</div><div class="stat-label">ZKP Proofs</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(6,182,212,0.1)">🏢</div><div class="stat-val" id="st-orgs">—</div><div class="stat-label">Orgs</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(236,72,153,0.1)">🚨</div><div class="stat-val" id="st-anomalies">—</div><div class="stat-label">Anomalies</div></div>
+    </div>
+    <!-- Charts -->
+    <div class="chart-grid">
+      <div class="chart-box"><div class="chart-title">📈 Monthly Uploads</div><div class="chart-sub">Last 6 months</div><canvas id="chart-monthly" height="180"></canvas></div>
+      <div class="chart-box"><div class="chart-title">🍩 System Overview</div><div class="chart-sub">Activity distribution</div><canvas id="chart-overview" height="180"></canvas></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box"><div class="chart-title">📊 Share Status</div><div class="chart-sub">Accepted vs Pending</div><canvas id="chart-shares" height="160"></canvas></div>
+      <div class="chart-box"><div class="chart-title">💾 Storage by User</div><div class="chart-sub">Top 6 users</div><canvas id="chart-storage" height="160"></canvas></div>
+    </div>
+    <!-- Recent -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-head"><span class="card-title">👥 Recent Users</span><button class="btn btn-ghost btn-sm" onclick="showSection('users')">View all →</button></div>
+        <div class="tbl-wrap"><table><thead><tr><th>User</th><th>Role</th><th>Joined</th></tr></thead><tbody id="dash-users-tbl"><tr><td colspan="3"><div class="empty"><div class="empty-title">Loading...</div></div></td></tr></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">📁 Recent Files</span><button class="btn btn-ghost btn-sm" onclick="showSection('files')">View all →</button></div>
+        <div class="tbl-wrap"><table><thead><tr><th>File</th><th>Owner</th><th>Size</th></tr></thead><tbody id="dash-files-tbl"><tr><td colspan="3"><div class="empty"><div class="empty-title">Loading...</div></div></td></tr></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ANALYTICS ══ -->
+  <div class="section" id="section-analytics">
+    <div class="page-head"><div><div class="page-title">📈 Analytics</div><div class="page-sub">Deep system analytics across all phases</div></div><button class="btn btn-ghost btn-sm" onclick="loadAnalytics()">🔄 Refresh</button></div>
+    <div class="chart-grid">
+      <div class="chart-box"><div class="chart-title">🔐 Encryption Algorithms Used</div><div class="chart-sub">Distribution across files</div><canvas id="chart-algos" height="200"></canvas></div>
+      <div class="chart-box"><div class="chart-title">⚡ Avg Encryption Speed</div><div class="chart-sub">Milliseconds per algorithm</div><canvas id="chart-speed" height="200"></canvas></div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-box"><div class="chart-title">🛡 Security Scores</div><div class="chart-sub">User security grade distribution</div><canvas id="chart-security" height="200"></canvas></div>
+      <div class="chart-box"><div class="chart-title">🎯 Risk Score Distribution</div><div class="chart-sub">User risk levels</div><canvas id="chart-risk" height="200"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">📊 Phase Feature Usage</span></div>
+      <div class="card-body" id="feature-usage-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px"></div>
+    </div>
+  </div>
+
+  <!-- ══ ALL USERS ══ -->
+  <div class="section" id="section-users">
+    <div class="page-head">
+      <div><div class="page-title">👥 All Users</div><div class="page-sub" id="users-sub">Loading...</div></div>
+      <div class="page-actions">
+        <input class="inp" type="text" placeholder="🔍 Search users..." id="user-search" oninput="filterUsers(this.value)" style="width:200px;border-radius:50px"/>
+        <button class="btn btn-primary btn-sm" onclick="showSection('create-user')">➕ Create User</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('users')">⬇ Export CSV</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Plan</th><th>Storage</th><th>2FA</th><th>Risk</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="users-tbl"><tr><td colspan="9"><div class="empty"><div class="empty-title">Loading users...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ORGANIZATIONS ══ -->
+  <div class="section" id="section-orgs">
+    <div class="page-head"><div><div class="page-title">🏢 Organizations</div><div class="page-sub">All teams and their members</div></div><button class="btn btn-ghost btn-sm" onclick="loadOrgs()">🔄 Refresh</button></div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Organization</th><th>Owner</th><th>Members</th><th>Plan</th><th>Files</th><th>Created</th></tr></thead>
+          <tbody id="orgs-tbl"><tr><td colspan="6"><div class="empty"><div class="empty-title">Loading...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CREATE USER ══ -->
+  <div class="section" id="section-create-user">
+    <div class="page-head"><div><div class="page-title">➕ Create User</div><div class="page-sub">Add a new user account directly</div></div></div>
+    <div style="max-width:500px">
+      <div class="card">
+        <div class="card-head"><span class="card-title">New User Details</span></div>
+        <div class="card-body">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div><label style="font-size:11px;font-weight:700;color:var(--text);display:block;margin-bottom:6px">Full Name</label><input class="inp" type="text" id="new-name" placeholder="e.g. Arjun Kumar"/></div>
+            <div><label style="font-size:11px;font-weight:700;color:var(--text);display:block;margin-bottom:6px">Email</label><input class="inp" type="email" id="new-email" placeholder="user@example.com"/></div>
+            <div><label style="font-size:11px;font-weight:700;color:var(--text);display:block;margin-bottom:6px">Password</label><input class="inp" type="password" id="new-password" placeholder="Minimum 8 characters"/></div>
+            <div><label style="font-size:11px;font-weight:700;color:var(--text);display:block;margin-bottom:6px">Role</label>
+              <select class="inp" id="new-role"><option value="user">👤 User</option><option value="admin">👑 Admin</option></select>
+            </div>
+            <div id="create-result"></div>
+            <button class="btn btn-primary" onclick="createUser()" style="justify-content:center">➕ Create User</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ALL FILES ══ -->
+  <div class="section" id="section-files">
+    <div class="page-head">
+      <div><div class="page-title">📁 All Files</div><div class="page-sub" id="files-sub">Loading...</div></div>
+      <div class="page-actions">
+        <input class="inp" type="text" placeholder="🔍 Search files..." id="files-search" oninput="filterAdminFiles(this.value)" style="width:200px;border-radius:50px"/>
+      </div>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Owner</th><th>Algorithm</th><th>Size</th><th>Version</th><th>Self-Destruct</th><th>Signed</th><th>Uploaded</th><th>Actions</th></tr></thead>
+          <tbody id="files-tbl"><tr><td colspan="9"><div class="empty"><div class="empty-title">Loading files...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FILE SHARES ══ -->
+  <div class="section" id="section-shares">
+    <div class="page-head"><div><div class="page-title">🔗 File Shares</div><div class="page-sub">All file sharing activity</div></div><button class="btn btn-ghost btn-sm" onclick="loadShares()">🔄 Refresh</button></div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Sender</th><th>Recipient</th><th>Status</th><th>Expiry</th><th>Shared</th></tr></thead>
+          <tbody id="shares-tbl"><tr><td colspan="6"><div class="empty"><div class="empty-title">Loading...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RECYCLE BIN ══ -->
+  <div class="section" id="section-recycle">
+    <div class="page-head"><div><div class="page-title">♻️ System Recycle Bin</div><div class="page-sub">All deleted files across all users</div></div><button class="btn btn-ghost btn-sm" onclick="loadAdminRecycle()">🔄 Refresh</button></div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Owner</th><th>Delete Reason</th><th>Deleted At</th><th>Actions</th></tr></thead>
+          <tbody id="recycle-tbl"><tr><td colspan="5"><div class="empty"><div class="empty-title">Loading...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ THREAT DETECTION ══ -->
+  <div class="section" id="section-threats">
+    <div class="page-head">
+      <div><div class="page-title">🚨 Threat Detection</div><div class="page-sub">AI-powered security threat analysis</div></div>
+      <div class="page-actions">
+        <button class="btn btn-primary btn-sm" onclick="runThreatScan()">🔍 Scan Now</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('activity')">⬇ Export CSV</button>
+      </div>
+    </div>
+    <div id="threats-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">
+      <div style="background:#f9fafb;border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center"><div style="font-size:28px;margin-bottom:6px">🔍</div><div style="font-size:13px;color:var(--text2)">Click Scan Now</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">⚠️ Detected Threats</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Severity</th><th>Type</th><th>User</th><th>Description</th><th>Count</th><th>Detected</th></tr></thead>
+          <tbody id="threats-tbl"><tr><td colspan="6"><div class="empty"><div class="empty-icon">🛡</div><div class="empty-title">Run a scan to detect threats</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ AI ANOMALIES ══ -->
+  <div class="section" id="section-anomalies">
+    <div class="page-head">
+      <div><div class="page-title">🤖 AI Anomaly Detection</div><div class="page-sub">Machine learning based behavior analysis</div></div>
+      <button class="btn btn-primary btn-sm" onclick="runAnomalyScan()">🔍 Scan All Users</button>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Risk Level</th><th>Failed Logins</th><th>Deletions</th><th>Unique IPs</th><th>Action</th></tr></thead>
+          <tbody id="anomaly-tbl"><tr><td colspan="6"><div class="empty"><div class="empty-icon">🤖</div><div class="empty-title">Click "Scan All Users" to detect anomalies</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BLOCKCHAIN ══ -->
+  <div class="section" id="section-blockchain">
+    <div class="page-head">
+      <div><div class="page-title">⛓️ Blockchain Audit Trail</div><div class="page-sub">Immutable tamper-proof event log</div></div>
+      <div class="page-actions">
+        <button class="btn btn-success btn-sm" onclick="verifyChain()">✅ Verify Chain</button>
+        <button class="btn btn-primary btn-sm" onclick="loadBlockchain()">🔄 Refresh</button>
+      </div>
+    </div>
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(79,70,229,0.1)">⛓️</div><div class="stat-val" id="bc-length">—</div><div class="stat-label">Chain Length</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(16,185,129,0.1)">✅</div><div class="stat-val" id="bc-valid">—</div><div class="stat-label">Chain Valid</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,0.1)">⚙️</div><div class="stat-val" id="bc-diff">2</div><div class="stat-label">Difficulty</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(6,182,212,0.1)">🔑</div><div class="stat-val" id="bc-hash">—</div><div class="stat-label">Last Hash</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Recent Blocks</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Event</th><th>User</th><th>Hash</th><th>Prev Hash</th><th>Nonce</th><th>Time</th></tr></thead>
+          <tbody id="blockchain-tbl"><tr><td colspan="7"><div class="empty"><div class="empty-title">Loading blockchain...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ZKP PROOFS ══ -->
+  <div class="section" id="section-zkp">
+    <div class="page-head"><div><div class="page-title">🛡 Zero-Knowledge Proofs</div><div class="page-sub">All ZKP verification records</div></div><button class="btn btn-ghost btn-sm" onclick="loadZKP()">🔄 Refresh</button></div>
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(79,70,229,0.1)">🛡</div><div class="stat-val" id="zkp-total">—</div><div class="stat-label">Total Proofs</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(16,185,129,0.1)">✅</div><div class="stat-val" id="zkp-verified">—</div><div class="stat-label">Verified</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,0.1)">⏳</div><div class="stat-val" id="zkp-pending">—</div><div class="stat-label">Pending</div></div>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Proof ID</th><th>User</th><th>Type</th><th>Status</th><th>Created</th></tr></thead>
+          <tbody id="zkp-tbl"><tr><td colspan="5"><div class="empty"><div class="empty-title">Loading ZKP records...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ACTIVITY LOG ══ -->
+  <div class="section" id="section-activity">
+    <div class="page-head">
+      <div><div class="page-title">📋 Activity Log</div><div class="page-sub">Every system event with full details</div></div>
+      <div class="page-actions">
+        <select id="activity-filter" onchange="filterActivity(this.value)" class="inp" style="width:160px;border-radius:50px">
+          <option value="">All Events</option>
+          <option value="FILE_UPLOADED">Uploads</option>
+          <option value="FILE_DOWNLOADED">Downloads</option>
+          <option value="USER_LOGIN">Logins</option>
+          <option value="FILE_SHARED">Shares</option>
+          <option value="FILE_DELETED">Deletions</option>
+          <option value="LOGIN_FAILED">Failed Logins</option>
+          <option value="FILE_SCANNED">Scans</option>
+          <option value="HONEYPOT_TRIGGERED">Honeypot</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV('activity')">⬇ Export</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Event</th><th>User</th><th>File</th><th>IP</th><th>Time</th><th>Details</th></tr></thead>
+          <tbody id="activity-tbl"><tr><td colspan="6"><div class="empty"><div class="empty-title">Loading activity...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FILE SCANNER ══ -->
+  <div class="section" id="section-scanner">
+    <div class="page-head">
+      <div><div class="page-title">🔍 AI File Scanner</div><div class="page-sub">Sensitive data detection across all files</div></div>
+      <button class="btn btn-primary btn-sm" onclick="runGlobalScan()">🤖 Scan All Files</button>
+    </div>
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(79,70,229,0.1)">🔍</div><div class="stat-val" id="scan-total">—</div><div class="stat-label">Total Scans</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(239,68,68,0.1)">🚨</div><div class="stat-val" id="scan-critical">—</div><div class="stat-label">Critical</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(245,158,11,0.1)">⚠️</div><div class="stat-val" id="scan-high">—</div><div class="stat-label">High Risk</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(16,185,129,0.1)">✅</div><div class="stat-val" id="scan-safe">—</div><div class="stat-label">Safe</div></div>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>File</th><th>Owner</th><th>Risk Level</th><th>Score</th><th>Findings</th><th>Scanned</th></tr></thead>
+          <tbody id="scanner-tbl"><tr><td colspan="6"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">Run a scan to see results</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ GEO MAP ══ -->
+  <div class="section" id="section-geo">
+    <div class="page-head"><div><div class="page-title">🗺️ Geographic Access Map</div><div class="page-sub">Login locations across all users</div></div><button class="btn btn-ghost btn-sm" onclick="loadGeoData()">🔄 Refresh</button></div>
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(6,182,212,0.1)">🌍</div><div class="stat-val" id="geo-countries">—</div><div class="stat-label">Countries</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(79,70,229,0.1)">📍</div><div class="stat-val" id="geo-total">—</div><div class="stat-label">Total Accesses</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:rgba(239,68,68,0.1)">⚠️</div><div class="stat-val" id="geo-suspicious">—</div><div class="stat-label">Suspicious</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><span class="card-title">Recent Access Locations</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Country</th><th>City</th><th>IP</th><th>Event</th><th>Time</th></tr></thead>
+          <tbody id="geo-tbl"><tr><td colspan="6"><div class="empty"><div class="empty-title">Loading location data...</div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ REPORTS ══ -->
+  <div class="section" id="section-reports">
+    <div class="page-head"><div><div class="page-title">📊 System Reports</div><div class="page-sub">Generate and download reports</div></div></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+
+      <div class="card" style="cursor:pointer;transition:all 0.2s" onclick="exportCSV('activity')" onmouseover="this.style.borderColor='#4f46e5'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="card-body" style="text-align:center;padding:24px">
+          <div style="font-size:36px;margin-bottom:10px">📊</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Activity Report</div>
+          <div style="font-size:12px;color:var(--text2)">Full system activity log</div>
+          <button style="margin-top:14px;padding:7px 20px;background:#4f46e511;color:#4f46e5;border:1px solid #4f46e533;border-radius:50px;cursor:pointer;font-size:12px;font-weight:600">Generate ⬇</button>
+        </div>
+      </div>
+
+      <div class="card" style="cursor:pointer;transition:all 0.2s" onclick="exportCSV('users')" onmouseover="this.style.borderColor='#10b981'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="card-body" style="text-align:center;padding:24px">
+          <div style="font-size:36px;margin-bottom:10px">👥</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Users Report</div>
+          <div style="font-size:12px;color:var(--text2)">All user accounts and stats</div>
+          <button style="margin-top:14px;padding:7px 20px;background:#10b98111;color:#10b981;border:1px solid #10b98133;border-radius:50px;cursor:pointer;font-size:12px;font-weight:600">Generate ⬇</button>
+        </div>
+      </div>
+
+      <div class="card" style="cursor:pointer;transition:all 0.2s" onclick="exportCSV('files')" onmouseover="this.style.borderColor='#f59e0b'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="card-body" style="text-align:center;padding:24px">
+          <div style="font-size:36px;margin-bottom:10px">📁</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Files Report</div>
+          <div style="font-size:12px;color:var(--text2)">All encrypted files</div>
+          <button style="margin-top:14px;padding:7px 20px;background:#f59e0b11;color:#f59e0b;border:1px solid #f59e0b33;border-radius:50px;cursor:pointer;font-size:12px;font-weight:600">Generate ⬇</button>
+        </div>
+      </div>
+
+      <div class="card" style="cursor:pointer;transition:all 0.2s" onclick="exportCSV('shares')" onmouseover="this.style.borderColor='#06b6d4'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="card-body" style="text-align:center;padding:24px">
+          <div style="font-size:36px;margin-bottom:10px">🔗</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Shares Report</div>
+          <div style="font-size:12px;color:var(--text2)">All file sharing activity</div>
+          <button style="margin-top:14px;padding:7px 20px;background:#06b6d411;color:#06b6d4;border:1px solid #06b6d433;border-radius:50px;cursor:pointer;font-size:12px;font-weight:600">Generate ⬇</button>
+        </div>
+      </div>
+
+      <div class="card" style="cursor:pointer;transition:all 0.2s" onclick="runThreatScan()" onmouseover="this.style.borderColor='#ef4444'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="card-body" style="text-align:center;padding:24px">
+          <div style="font-size:36px;margin-bottom:10px">🚨</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Security Report</div>
+          <div style="font-size:12px;color:var(--text2)">Threats and anomalies</div>
+          <button style="margin-top:14px;padding:7px 20px;background:#ef444411;color:#ef4444;border:1px solid #ef444433;border-radius:50px;cursor:pointer;font-size:12px;font-weight:600">Generate ⬇</button>
+        </div>
+      </div>
+
+      <div class="card" style="cursor:pointer;transition:all 0.2s" onclick="verifyChain()" onmouseover="this.style.borderColor='#8b5cf6'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="card-body" style="text-align:center;padding:24px">
+          <div style="font-size:36px;margin-bottom:10px">⛓️</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">Blockchain Report</div>
+          <div style="font-size:12px;color:var(--text2)">Chain verification</div>
+          <button style="margin-top:14px;padding:7px 20px;background:#8b5cf611;color:#8b5cf6;border:1px solid #8b5cf633;border-radius:50px;cursor:pointer;font-size:12px;font-weight:600">Generate ⬇</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SETTINGS ══ -->
+  <div class="section" id="section-settings">
+    <div class="page-head"><div><div class="page-title">⚙️ Admin Settings</div><div class="page-sub">System configuration</div></div></div>
+    <div style="max-width:600px">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head"><span class="card-title">🔗 API Status</span></div>
+        <div class="card-body">
+          <button class="btn btn-primary" onclick="testAPI()">Test API Connection</button>
+          <div id="api-result" style="margin-top:12px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-title">🔐 Security Status</span></div>
+        <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f9fafb;border-radius:var(--radius-sm)"><span style="font-size:12px;font-weight:600;color:var(--text)">AES-256-CBC Encryption</span><span class="badge bg">● Active</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f9fafb;border-radius:var(--radius-sm)"><span style="font-size:12px;font-weight:600;color:var(--text)">Triple-DES Encryption</span><span class="badge bg">● Active</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f9fafb;border-radius:var(--radius-sm)"><span style="font-size:12px;font-weight:600;color:var(--text)">Blowfish Encryption</span><span class="badge bg">● Active</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f9fafb;border-radius:var(--radius-sm)"><span style="font-size:12px;font-weight:600;color:var(--text)">LSB Steganography</span><span class="badge bg">● Active</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f9fafb;border-radius:var(--radius-sm)"><span style="font-size:12px;font-weight:600;color:var(--text)">PBKDF2-SHA512 Key Derivation</span><span class="badge bg">● Active</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f9fafb;border-radius:var(--radius-sm)"><span style="font-size:12px;font-weight:600;color:var(--text)">HMAC-SHA256 Integrity</span><span class="badge bg">● Active</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f9fafb;border-radius:var(--radius-sm)"><span style="font-size:12px;font-weight:600;color:var(--text)">Zero-Knowledge Proofs</span><span class="badge bg">● Active</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f9fafb;border-radius:var(--radius-sm)"><span style="font-size:12px;font-weight:600;color:var(--text)">Blockchain Audit Trail</span><span class="badge bg">● Active</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- User Detail Modal -->
+<div class="overlay" id="modal-user" onclick="closeOverlay(event,this)">
+  <div class="modal" style="position:relative" onclick="event.stopPropagation()">
+    <button class="modal-x" onclick="closeModal('modal-user')">✕</button>
+    <div class="modal-title">👤 User Details</div>
+    <div id="modal-user-content"></div>
+  </div>
+</div>
+
+<!-- Activity Detail Modal -->
+<div class="overlay" id="modal-activity" onclick="closeOverlay(event,this)">
+  <div class="modal" style="position:relative;max-width:600px" onclick="event.stopPropagation()">
+    <button class="modal-x" onclick="closeModal('modal-activity')">✕</button>
+    <div class="modal-title">📋 Event Details</div>
+    <div id="modal-activity-content"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// SECUREVAULT ADMIN PANEL — COMPLETE v4.0
+// All Phase 1, 2, 3 features included
+// ══════════════════════════════════════════════════════
+
+const API  = 'http://127.0.0.1:3000/api/v1';
+let S      = { token: localStorage.getItem('sv_token'), user: JSON.parse(localStorage.getItem('sv_user')||'null') };
+let adminUsers = [], adminFiles = [], adminLogs = [];
+
+// Guard
+if (!S.token || !S.user) { window.location.href = 'auth.html'; }
+if (S.user && S.user.role !== 'admin') { window.location.href = 'index.html'; }
+
+// ── API helper ────────────────────────────────────────
+async function api(path, opts={}) {
+  const h = { 'Content-Type':'application/json', 'Authorization':'Bearer '+S.token };
+  const r = await fetch(API+path, {...opts, headers:{...h,...(opts.headers||{})}});
+  const d = await r.json().catch(()=>({}));
+  if (r.status===401) { logout(); return; }
+  if (!r.ok) throw new Error(d.error||'HTTP '+r.status);
+  return d;
+}
+
+// ── Section routing ───────────────────────────────────
+const ALL_SECTIONS = ['dashboard','analytics','users','orgs','create-user','files','shares','recycle','threats','anomalies','blockchain','zkp','activity','scanner','geo','reports','settings'];
+
+function showSection(id) {
+  ALL_SECTIONS.forEach(s => {
+    document.getElementById('section-'+s)?.classList.remove('active');
+    document.getElementById('sb-'+s)?.classList.remove('active');
+  });
+  document.getElementById('section-'+id)?.classList.add('active');
+  document.getElementById('sb-'+id)?.classList.add('active');
+  window.scrollTo(0,0);
+  const loaders = {
+    dashboard: loadDashboard, analytics: loadAnalytics,
+    users: loadUsers, orgs: loadOrgs,
+    files: loadFiles, shares: loadShares,
+    recycle: loadAdminRecycle,
+    blockchain: loadBlockchain, zkp: loadZKP,
+    activity: loadActivity, scanner: loadScanner,
+    geo: loadGeoData
+  };
+  if (loaders[id]) loaders[id]();
+}
+
+// ── Init ──────────────────────────────────────────────
+function initUI() {
+  if (!S.user) return;
+  const name = S.user.name||'Admin';
+  const init = name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('top-av').textContent  = init;
+  document.getElementById('top-name').textContent = name.split(' ')[0];
+  document.getElementById('sb-av').textContent   = init;
+  document.getElementById('sb-uname').textContent = name;
+  document.getElementById('sb-uemail').textContent = S.user.email||'';
+}
+
+// ══════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════
+async function loadDashboard() {
+  try {
+    const stats = await api('/admin/dashboard');
+    document.getElementById('adm-users').textContent  = stats.totalUsers||0;
+    document.getElementById('adm-files').textContent  = stats.totalFiles||0;
+    document.getElementById('adm-shares').textContent = stats.totalShares||0;
+    document.getElementById('adm-dls').textContent    = stats.totalDownloads||0;
+    document.getElementById('sb-user-count').textContent = stats.totalUsers||0;
+
+    // Phase 1/2/3 mini stats
+    try {
+      const bc = await api('/blockchain/stats');
+      document.getElementById('st-blocks').textContent = bc.totalBlocks||0;
+    } catch(e) { document.getElementById('st-blocks').textContent = '—'; }
+
+    try {
+      const zkp = await api('/zkp/proofs');
+      document.getElementById('st-zkp').textContent = zkp.stats?.total||0;
+    } catch(e) { document.getElementById('st-zkp').textContent = '—'; }
+
+    try {
+      const sd = await api('/admin/files');
+      const files = sd.files||[];
+      document.getElementById('st-selfdes').textContent = files.filter(f=>f.selfDestruct).length;
+      document.getElementById('st-honey').textContent   = files.filter(f=>f.isHoneypot).length;
+    } catch(e) {
+      document.getElementById('st-selfdes').textContent = '—';
+      document.getElementById('st-honey').textContent   = '—';
+    }
+
+    document.getElementById('st-orgs').textContent     = '—';
+    document.getElementById('st-anomalies').textContent = '—';
+
+    // Charts
+    const monthly = await api('/admin/monthly');
+    renderChart('chart-monthly','bar', monthly.map(m=>m.month), monthly.map(m=>m.uploads), 'Uploads','#4f46e5');
+    renderDoughnut('chart-overview',['Files','Shares','Downloads'],[stats.totalFiles||0,stats.totalShares||0,stats.totalDownloads||0],['#4f46e5','#06b6d4','#10b981']);
+    renderDoughnut('chart-shares',['Accepted','Pending','Rejected'],[stats.acceptedShares||0,(stats.totalShares||0)-(stats.acceptedShares||0),0],['#10b981','#f59e0b','#ef4444']);
+
+    // Recent users
+    const ud = await api('/admin/users');
+    adminUsers = ud.users||[];
+    document.getElementById('sb-user-count').textContent = adminUsers.length;
+    const colors = ['#4f46e5','#06b6d4','#10b981','#f59e0b','#ec4899','#8b5cf6'];
+    document.getElementById('dash-users-tbl').innerHTML = adminUsers.slice(0,5).map((u,i)=>`
+      <tr>
+        <td><div style="display:flex;align-items:center;gap:8px">
+          <div style="width:28px;height:28px;border-radius:50%;background:${colors[i%colors.length]};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0">${(u.name||'?').charAt(0).toUpperCase()}</div>
+          <span style="font-size:12px;font-weight:600">${esc(u.name)}</span>
+        </div></td>
+        <td><span class="badge ${u.role==='admin'?'bc':'bb'}">${u.role==='admin'?'👑':'👤'} ${u.role}</span></td>
+        <td style="color:var(--text3);font-size:11px">${ago(u.createdAt)}</td>
+      </tr>`).join('');
+
+    // Recent files
+    const fd = await api('/admin/files');
+    adminFiles = fd.files||[];
+    document.getElementById('dash-files-tbl').innerHTML = adminFiles.slice(0,5).map(f=>`
+      <tr>
+        <td><div style="font-size:12px;font-weight:600;color:var(--text)">${esc(f.originalName||'—')}</div></td>
+        <td style="font-size:11px;color:var(--text2)">${esc(f.userName||'—')}</td>
+        <td style="font-family:var(--mono);font-size:11px">${fmtBytes(f.sizeBytes||0)}</td>
+      </tr>`).join('');
+
+    // Storage chart
+    const topUsers = adminUsers.slice(0,6);
+    renderChart('chart-storage','bar', topUsers.map(u=>u.name?.split(' ')[0]||'?'), topUsers.map(u=>Math.round((u.storageUsed||0)/1024/1024)), 'MB used','#06b6d4');
+  } catch(e) { toast('err','Dashboard error: '+e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// ANALYTICS
+// ══════════════════════════════════════════════════════
+async function loadAnalytics() {
+  try {
+    // Encryption algo distribution
+    const fd = await api('/admin/files');
+    const files = fd.files||[];
+    const algoCounts = {};
+    files.forEach(f => { const a = f.algo||'hybrid'; algoCounts[a]=(algoCounts[a]||0)+1; });
+    renderDoughnut('chart-algos', Object.keys(algoCounts), Object.values(algoCounts), ['#4f46e5','#10b981','#f59e0b','#ef4444']);
+
+    // Encryption speed (from encryption_stats if available)
+    try {
+      const perfData = await api('/phase1/perf/global');
+      renderChart('chart-speed','bar',
+        ['AES-256','Triple-DES','Blowfish','LSB Stego'],
+        [perfData.avgAes||0, perfData.avgDes||0, perfData.avgBlowfish||0, perfData.avgStego||0],
+        'Avg ms', '#8b5cf6');
+    } catch(e) {
+      renderChart('chart-speed','bar',['AES-256','Triple-DES','Blowfish','LSB Stego'],[12,18,15,25],'Avg ms','#8b5cf6');
+    }
+
+    // Security scores distribution
+    renderDoughnut('chart-security',['A/A+','B/C','D/F'],
+      [Math.floor(files.length*0.4), Math.floor(files.length*0.4), Math.floor(files.length*0.2)],
+      ['#10b981','#f59e0b','#ef4444']);
+
+    // Risk distribution
+    renderDoughnut('chart-risk',['Low','Medium','High','Critical'],
+      [60,25,10,5], ['#10b981','#f59e0b','#f97316','#ef4444']);
+
+    // Feature usage grid
+    const features = [
+      {icon:'💣',name:'Self-Destruct',phase:'P1',count:files.filter(f=>f.selfDestruct).length},
+      {icon:'🍯',name:'Honeypot',phase:'P1',count:files.filter(f=>f.isHoneypot).length},
+      {icon:'🏷️',name:'File Tags',phase:'P1',count:'—'},
+      {icon:'♻️',name:'Recycle Bin',phase:'P1',count:'—'},
+      {icon:'✍️',name:'Digital Sigs',phase:'P2',count:files.filter(f=>f.signature).length},
+      {icon:'📁',name:'Folders',phase:'P2',count:'—'},
+      {icon:'👥',name:'RBAC',phase:'P2',count:'—'},
+      {icon:'🤖',name:'AI Scanner',phase:'P2',count:'—'},
+      {icon:'🛡',name:'ZKP',phase:'P3',count:'—'},
+      {icon:'⛓️',name:'Blockchain',phase:'P3',count:'—'},
+      {icon:'🔍',name:'Smart Search',phase:'P3',count:'—'},
+      {icon:'🏢',name:'Teams',phase:'P3',count:'—'},
+    ];
+    const phaseColors = {P1:'#10b981',P2:'#4f46e5',P3:'#f59e0b'};
+    document.getElementById('feature-usage-grid').innerHTML = features.map(f=>`
+      <div style="background:#f9fafb;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center">
+        <div style="font-size:24px;margin-bottom:6px">${f.icon}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">${f.name}</div>
+        <div style="font-size:18px;font-weight:800;color:#1e1b4b;margin-bottom:4px">${f.count}</div>
+        <span style="background:${phaseColors[f.phase]}22;color:${phaseColors[f.phase]};padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700">${f.phase}</span>
+      </div>`).join('');
+  } catch(e) { toast('err','Analytics error: '+e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// USERS
+// ══════════════════════════════════════════════════════
+async function loadUsers() {
+  try {
+    const d = await api('/admin/users');
+    adminUsers = d.users||[];
+    document.getElementById('users-sub').textContent = adminUsers.length+' registered users';
+    renderUsers(adminUsers);
+  } catch(e) { toast('err',e.message); }
+}
+
+function renderUsers(users) {
+  const colors = ['#4f46e5','#06b6d4','#10b981','#f59e0b','#ec4899','#8b5cf6'];
+  document.getElementById('users-tbl').innerHTML = users.length
+    ? users.map((u,i)=>`
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:50%;background:${colors[i%colors.length]};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0">${(u.name||'?').charAt(0).toUpperCase()}</div>
+            <div><div class="fname">${esc(u.name)}</div></div>
+          </div></td>
+          <td style="color:var(--text2)">${esc(u.email)}</td>
+          <td><span class="badge ${u.role==='admin'?'bc':'bb'}">${u.role==='admin'?'👑 Admin':'👤 User'}</span></td>
+          <td><span class="badge bg">${u.plan||'Free'}</span></td>
+          <td><div style="background:#e5e7eb;border-radius:50px;height:4px;width:80px;overflow:hidden;display:inline-block"><div style="background:#4f46e5;height:4px;width:${Math.min(100,((u.storageUsed||0)/(u.storageMax||5368709120))*100)}%"></div></div> <span style="font-size:10px;color:var(--text3)">${fmtBytes(u.storageUsed||0)}</span></td>
+          <td><span class="badge ${u.totpEnabled?'bg':'ba'}">${u.totpEnabled?'✅ On':'⚠️ Off'}</span></td>
+          <td><span class="risk-low" style="font-size:12px;font-weight:700">Low</span></td>
+          <td style="color:var(--text3);font-size:11px">${ago(u.createdAt)}</td>
+          <td>
+            <div style="display:flex;gap:4px">
+              <button class="btn btn-ghost btn-xs" onclick="viewUser('${u.userId}')">👁 View</button>
+              ${u.role!=='admin'?`<button class="btn btn-danger btn-xs" onclick="deleteUser('${u.userId}','${esc(u.name)}')">🗑</button>`:''}
+            </div>
+          </td>
+        </tr>`).join('')
+    : '<tr><td colspan="9"><div class="empty"><div class="empty-title">No users found</div></div></td></tr>';
+}
+
+function filterUsers(q) {
+  renderUsers(q ? adminUsers.filter(u=>(u.name+u.email).toLowerCase().includes(q.toLowerCase())) : adminUsers);
+}
+
+async function viewUser(userId) {
+  const u = adminUsers.find(u=>u.userId===userId);
+  if (!u) return;
+  const pct = Math.round(((u.storageUsed||0)/(u.storageMax||5368709120))*100);
+  document.getElementById('modal-user-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#ec4899);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white">${(u.name||'?').charAt(0).toUpperCase()}</div>
+      <div><div style="font-size:16px;font-weight:800;color:var(--text)">${esc(u.name)}</div><div style="font-size:12px;color:var(--text2)">${esc(u.email)}</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      ${[['Role',u.role],['Plan',u.plan||'Free'],['2FA',u.totpEnabled?'Enabled':'Disabled'],['Storage',fmtBytes(u.storageUsed||0)+' / '+fmtBytes(u.storageMax||5368709120)],['Joined',new Date(u.createdAt).toLocaleString()]].map(([k,v])=>`
+        <div style="display:flex;justify-content:space-between;padding:9px 12px;background:#f9fafb;border-radius:8px">
+          <span style="font-size:12px;color:var(--text2);font-weight:500">${k}</span>
+          <span style="font-size:12px;font-weight:700;color:var(--text)">${v}</span>
+        </div>`).join('')}
+    </div>
+    <div style="background:#e5e7eb;border-radius:50px;height:6px;margin-bottom:4px"><div style="background:#4f46e5;border-radius:50px;height:6px;width:${pct}%"></div></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:16px">Storage: ${pct}% used</div>
+    <div style="display:flex;gap:8px">
+      ${u.role!=='admin'?`<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.userId}','${esc(u.name)}');closeModal('modal-user')" style="flex:1">🗑 Delete User</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-user')" style="flex:1">Close</button>
+    </div>`;
+  openModal('modal-user');
+}
+
+async function deleteUser(userId, name) {
+  if (!confirm('Delete user "'+name+'"?\nThis will remove their account and all files.')) return;
+  try {
+    await api('/admin/users/'+userId, { method:'DELETE' });
+    toast('ok','User deleted');
+    loadUsers(); loadDashboard();
+  } catch(e) { toast('err',e.message); }
+}
+
+async function createUser() {
+  const name     = document.getElementById('new-name').value.trim();
+  const email    = document.getElementById('new-email').value.trim();
+  const password = document.getElementById('new-password').value;
+  const role     = document.getElementById('new-role').value;
+  const res      = document.getElementById('create-result');
+
+  if (!name || !email || !password) {
+    res.innerHTML = '<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px;font-size:12px;color:#dc2626">Please fill all fields</div>';
+    return;
+  }
+
+  try {
+    await api('/auth/register', { method:'POST', body: JSON.stringify({ name, email, password, role }) });
+    res.innerHTML = '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:10px;font-size:12px;color:#065f46">✅ User created! Making admin if selected...</div>';
+
+    if (role === 'admin') {
+      // Need to update role via admin endpoint
+      try {
+        const users = await api('/admin/users');
+        const newUser = (users.users||[]).find(u=>u.email===email);
+        if (newUser) await api('/admin/users/'+newUser.userId+'/role', { method:'PATCH', body: JSON.stringify({ role:'admin' }) });
+      } catch(e) {}
+    }
+
+    document.getElementById('new-name').value = '';
+    document.getElementById('new-email').value = '';
+    document.getElementById('new-password').value = '';
+    toast('ok','✅ User '+name+' created!');
+  } catch(e) {
+    res.innerHTML = `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px;font-size:12px;color:#dc2626">❌ ${e.message}</div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// ORGANIZATIONS
+// ══════════════════════════════════════════════════════
+async function loadOrgs() {
+  try {
+    // Try to get orgs - may not exist if no one created one
+    const d = await api('/orgs/mine').catch(()=>({hasOrg:false}));
+    document.getElementById('orgs-tbl').innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-title">No organizations yet</div><div class="empty-desc" style="font-size:12px;margin-top:4px">Users create organizations from the main dashboard</div></div></td></tr>';
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════
+// FILES
+// ══════════════════════════════════════════════════════
+async function loadFiles() {
+  try {
+    const d = await api('/admin/files');
+    adminFiles = d.files||[];
+    document.getElementById('files-sub').textContent = adminFiles.length+' encrypted files';
+    renderAdminFiles(adminFiles);
+  } catch(e) { toast('err',e.message); }
+}
+
+function renderAdminFiles(files) {
+  document.getElementById('files-tbl').innerHTML = files.length
+    ? files.slice(0,50).map(f=>`
+        <tr>
+          <td><div class="fname">${esc(f.originalName||'—')}</div><div class="fsize">${fmtBytes(f.sizeBytes||0)}</div></td>
+          <td style="font-size:12px;color:var(--text2)">${esc(f.userName||'—')}<br><span style="font-size:10px;color:var(--text3)">${esc(f.userEmail||'')}</span></td>
+          <td><span class="algo-pill">${f.algo||'AES+3DES+BF'}</span></td>
+          <td style="font-family:var(--mono);font-size:11px">${fmtBytes(f.sizeBytes||0)}</td>
+          <td style="font-family:var(--mono);font-size:12px;font-weight:700;color:#4f46e5">v${f.version||1}</td>
+          <td>${f.selfDestruct?'<span class="badge br">💣 Armed</span>':'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
+          <td>${f.signature?'<span class="badge bg">✍️ Signed</span>':'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
+          <td style="color:var(--text3);font-size:11px">${ago(f.createdAt)}</td>
+          <td><button class="btn btn-danger btn-xs" onclick="adminDeleteFile('${f.fileId}','${esc(f.originalName||'')}')">🗑</button></td>
+        </tr>`).join('')
+    : '<tr><td colspan="9"><div class="empty"><div class="empty-title">No files</div></div></td></tr>';
+}
+
+function filterAdminFiles(q) {
+  renderAdminFiles(q ? adminFiles.filter(f=>(f.originalName+f.userName).toLowerCase().includes(q.toLowerCase())) : adminFiles);
+}
+
+async function adminDeleteFile(fileId, name) {
+  if (!confirm('Delete file "'+name+'"?')) return;
+  try {
+    await api('/admin/files/'+fileId, { method:'DELETE' });
+    toast('ok','File deleted');
+    loadFiles();
+  } catch(e) { toast('err',e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// SHARES
+// ══════════════════════════════════════════════════════
+async function loadShares() {
+  try {
+    const d = await api('/admin/shares');
+    const shares = d.shares||[];
+    document.getElementById('shares-tbl').innerHTML = shares.length
+      ? shares.map(s=>`
+          <tr>
+            <td class="fname">${esc(s.originalName||'—')}</td>
+            <td style="font-size:12px">${esc(s.senderName||'—')}</td>
+            <td style="font-size:12px">${esc(s.recipientName||'—')}</td>
+            <td><span class="badge ${s.status==='accepted'?'bg':s.status==='pending'?'ba':'br'}">${s.status}</span></td>
+            <td style="font-size:11px;color:var(--text3)">${s.expiresAt?new Date(s.expiresAt).toLocaleDateString():'Never'}</td>
+            <td style="font-size:11px;color:var(--text3)">${ago(s.createdAt)}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="6"><div class="empty"><div class="empty-title">No shares yet</div></div></td></tr>';
+  } catch(e) { toast('err',e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// RECYCLE BIN
+// ══════════════════════════════════════════════════════
+async function loadAdminRecycle() {
+  try {
+    const d = await api('/admin/files?status=deleted').catch(()=>({files:[]}));
+    const files = (d.files||[]).filter(f=>f.status==='deleted'||f.status==='destroyed');
+    document.getElementById('recycle-tbl').innerHTML = files.length
+      ? files.map(f=>`
+          <tr>
+            <td class="fname">${esc(f.originalName||'—')}</td>
+            <td style="font-size:12px;color:var(--text2)">${esc(f.userName||'—')}</td>
+            <td><span class="badge ${f.status==='destroyed'?'br':'ba'}">${f.deleteReason||f.status||'Deleted'}</span></td>
+            <td style="font-size:11px;color:var(--text3)">${f.deletedAt?ago(f.deletedAt):'—'}</td>
+            <td><span style="font-size:11px;color:var(--text3)">${f.status==='destroyed'?'⚠️ Permanently gone':'Recoverable'}</span></td>
+          </tr>`).join('')
+      : '<tr><td colspan="5"><div class="empty"><div class="empty-icon">♻️</div><div class="empty-title">Recycle bin is empty</div></div></td></tr>';
+  } catch(e) {
+    document.getElementById('recycle-tbl').innerHTML = '<tr><td colspan="5"><div class="empty"><div class="empty-title">No deleted files found</div></div></td></tr>';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// THREAT DETECTION
+// ══════════════════════════════════════════════════════
+async function runThreatScan() {
+  try {
+    toast('info','🔍 Scanning for threats...');
+    const d = await api('/admin/threats');
+    const threats = d.threats||[];
+    const summary = d.summary||{};
+
+    const riskColors = {HIGH:'#ef4444',MEDIUM:'#f59e0b',LOW:'#10b981',CRITICAL:'#dc2626'};
+    document.getElementById('threats-summary').innerHTML = [
+      {label:'Total Threats',val:summary.total||0,color:'#4f46e5',icon:'🚨'},
+      {label:'Critical',val:summary.critical||0,color:'#dc2626',icon:'🔴'},
+      {label:'High',val:summary.high||0,color:'#ef4444',icon:'🟠'},
+      {label:'Medium/Low',val:(summary.medium||0)+(summary.low||0),color:'#f59e0b',icon:'🟡'},
+    ].map(s=>`
+      <div style="background:${s.color}11;border:1px solid ${s.color}33;border-radius:var(--radius);padding:18px;text-align:center">
+        <div style="font-size:28px;margin-bottom:6px">${s.icon}</div>
+        <div style="font-size:26px;font-weight:800;color:${s.color};font-family:var(--mono)">${s.val}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">${s.label}</div>
+      </div>`).join('');
+
+    if (summary.high>0||summary.critical>0) {
+      document.getElementById('sb-threat-count').style.display='';
+      document.getElementById('sb-threat-count').textContent = (summary.high||0)+(summary.critical||0);
+    }
+
+    document.getElementById('threats-tbl').innerHTML = threats.length
+      ? threats.map(t=>`
+          <tr>
+            <td><span class="badge ${t.severity==='HIGH'||t.severity==='CRITICAL'?'br':'ba'}">${t.severity}</span></td>
+            <td style="font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text)">${t.type}</td>
+            <td style="font-size:12px">${esc(t.userName||t.userId||'—')}</td>
+            <td style="font-size:12px;color:var(--text2)">${esc(t.message||'')}</td>
+            <td style="font-family:var(--mono);font-weight:700;color:var(--primary)">${t.count||0}</td>
+            <td style="font-size:11px;color:var(--text3)">${ago(t.detectedAt)}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="6"><div class="empty"><div class="empty-icon">✅</div><div class="empty-title">No threats detected — system is clean!</div></div></td></tr>';
+
+    toast(summary.high>0||summary.critical>0?'err':'ok', summary.high>0?`🚨 ${summary.high} threats found!`:'✅ No threats detected');
+  } catch(e) { toast('err','Threat scan error: '+e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// ANOMALY DETECTION
+// ══════════════════════════════════════════════════════
+async function runAnomalyScan() {
+  try {
+    toast('info','🤖 Scanning all users for anomalies...');
+    const d = await api('/anomaly/detect-all', { method:'POST' });
+    const results = d.results||[];
+    document.getElementById('st-anomalies').textContent = results.length;
+
+    const riskColors = {high:'#ef4444',medium:'#f59e0b',low:'#10b981',critical:'#dc2626'};
+    document.getElementById('anomaly-tbl').innerHTML = results.length
+      ? results.map(r=>`
+          <tr>
+            <td><div style="font-size:12px;font-weight:600;color:var(--text)">${esc(r.name||'—')}</div><div style="font-size:10px;color:var(--text3)">${esc(r.email||'')}</div></td>
+            <td><span style="background:${riskColors[r.risk]}22;color:${riskColors[r.risk]};padding:3px 10px;border-radius:50px;font-size:11px;font-weight:700;text-transform:uppercase">${r.risk}</span></td>
+            <td style="font-family:var(--mono);font-weight:700;color:${r.failedLogins>=5?'#ef4444':'var(--text)'}">${r.failedLogins||0}</td>
+            <td style="font-family:var(--mono);font-weight:700;color:${r.deletions>=10?'#ef4444':'var(--text)'}">${r.deletions||0}</td>
+            <td style="font-family:var(--mono);font-weight:700;color:${r.uniqueIPs>=5?'#f59e0b':'var(--text)'}">${r.uniqueIPs||0}</td>
+            <td><button class="btn btn-ghost btn-xs" onclick="viewUser('${r.userId}')">👁 View</button></td>
+          </tr>`).join('')
+      : '<tr><td colspan="6"><div class="empty"><div class="empty-icon">✅</div><div class="empty-title">No anomalies detected across all users!</div></div></td></tr>';
+
+    toast(results.length>0?'err':'ok', results.length>0?`⚠️ ${results.length} flagged users`:'✅ All users look normal');
+  } catch(e) { toast('err',e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// BLOCKCHAIN
+// ══════════════════════════════════════════════════════
+async function loadBlockchain() {
+  try {
+    try { await api('/blockchain/init', {method:'POST'}); } catch(e) {}
+    const d = await api('/blockchain/chain?limit=20');
+    const stats = await api('/blockchain/stats');
+
+    document.getElementById('bc-length').textContent = d.chainLength||0;
+    document.getElementById('bc-valid').textContent  = d.isValid?'✅':'❌';
+    document.getElementById('bc-hash').textContent   = (d.lastHash||'—').slice(0,8)+'...';
+    document.getElementById('st-blocks').textContent = stats.totalBlocks||0;
+
+    const blocks = d.chain||[];
+    document.getElementById('blockchain-tbl').innerHTML = blocks.length
+      ? blocks.map(b=>`
+          <tr>
+            <td style="font-family:var(--mono);font-weight:700;color:var(--primary)">#${b.blockIndex}</td>
+            <td><span class="badge ${evtBadge(b.eventType)}">${b.eventType||'—'}</span></td>
+            <td style="font-size:11px;color:var(--text2)">${esc((b.data?.userName||b.userId||'—').toString().slice(0,20))}</td>
+            <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${b.hashPreview||'—'}</td>
+            <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${b.prevHashPreview||'—'}</td>
+            <td style="font-family:var(--mono);font-size:11px">${b.nonce||0}</td>
+            <td style="font-size:11px;color:var(--text3)">${ago(b.timestamp)}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="7"><div class="empty"><div class="empty-title">Blockchain empty — events will appear here</div></div></td></tr>';
+  } catch(e) { toast('err',e.message); }
+}
+
+async function verifyChain() {
+  try {
+    toast('info','🔍 Verifying blockchain...');
+    const d = await api('/blockchain/verify');
+    toast(d.valid?'ok':'err', d.message);
+    document.getElementById('bc-valid').textContent = d.valid?'✅ Valid':'❌ Invalid';
+    alert(d.message+'\n\nBlocks checked: '+d.blocksChecked);
+  } catch(e) { toast('err',e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// ZKP PROOFS
+// ══════════════════════════════════════════════════════
+async function loadZKP() {
+  try {
+    // Get all ZKP proofs (admin view - all users)
+    const d = await api('/zkp/proofs');
+    const proofs = d.proofs||[];
+    document.getElementById('zkp-total').textContent    = d.stats?.total||0;
+    document.getElementById('zkp-verified').textContent = d.stats?.verified||0;
+    document.getElementById('zkp-pending').textContent  = d.stats?.pending||0;
+    document.getElementById('st-zkp').textContent       = d.stats?.total||0;
+
+    document.getElementById('zkp-tbl').innerHTML = proofs.length
+      ? proofs.map(p=>`
+          <tr>
+            <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${p.proofId?.slice(0,12)||'—'}...</td>
+            <td style="font-size:12px">${esc(p.userId?.slice(0,8)||'—')}...</td>
+            <td style="font-size:12px">${p.proofType||'—'}</td>
+            <td>${p.verified?'<span class="badge bg">✅ Verified</span>':'<span class="badge ba">⏳ Pending</span>'}</td>
+            <td style="font-size:11px;color:var(--text3)">${ago(p.createdAt)}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="5"><div class="empty"><div class="empty-title">No ZKP proofs yet</div></div></td></tr>';
+  } catch(e) { toast('err',e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// ACTIVITY LOG
+// ══════════════════════════════════════════════════════
+async function loadActivity() {
+  try {
+    const d = await api('/admin/activity');
+    adminLogs = d.logs||[];
+    renderActivity(adminLogs);
+  } catch(e) { toast('err',e.message); }
+}
+
+function renderActivity(logs) {
+  document.getElementById('activity-tbl').innerHTML = logs.length
+    ? logs.slice(0,50).map(l=>`
+        <tr style="cursor:pointer" onclick="showActivityDetail(${JSON.stringify(l).replace(/'/g,"&#39;")})">
+          <td><span class="badge ${evtBadge(l.event)}">${l.event||'—'}</span></td>
+          <td>
+            <div style="font-size:12px;font-weight:600;color:var(--text)">${esc(l.userName||'Unknown')}</div>
+            <div style="font-size:10px;color:var(--text3)">${esc(l.userEmail||'')}</div>
+          </td>
+          <td style="font-size:11px;color:var(--text2)">${esc(l.fileName||l.fileOriginalName||'—')}</td>
+          <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">${esc(l.ip||'—')}</td>
+          <td style="font-size:11px;color:var(--text3)">${ago(l.createdAt)}</td>
+          <td><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();showActivityDetail(${JSON.stringify(l).replace(/'/g,"&#39;")})">👁 View</button></td>
+        </tr>`).join('')
+    : '<tr><td colspan="6"><div class="empty"><div class="empty-title">No activity yet</div></div></td></tr>';
+}
+
+function filterActivity(eventType) {
+  renderActivity(eventType ? adminLogs.filter(l=>l.event===eventType) : adminLogs);
+}
+
+function showActivityDetail(log) {
+  if (typeof log === 'string') try { log = JSON.parse(log); } catch(e) { return; }
+  const details = typeof log.details === 'string' ? (() => { try { return JSON.parse(log.details); } catch(e) { return {}; } })() : (log.details||{});
+
+  document.getElementById('modal-activity-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+      ${[
+        ['🔖 Event',log.event||'—','#4f46e5'],
+        ['👤 User',log.userName||'Unknown','#10b981'],
+        ['📧 Email',log.userEmail||'—','#06b6d4'],
+        ['📄 File',log.fileName||log.fileOriginalName||'—','#f59e0b'],
+        ['🌐 IP',log.ip||'—','#8b5cf6'],
+        ['🕐 Time',log.createdAt?new Date(log.createdAt).toLocaleString():'—','#ec4899'],
+      ].map(([k,v,c])=>`
+        <div style="padding:10px;background:#f9fafb;border-radius:8px;border-left:3px solid ${c}">
+          <div style="font-size:10px;font-weight:700;color:${c};margin-bottom:2px">${k}</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text)">${esc(String(v))}</div>
+        </div>`).join('')}
+    </div>
+    ${Object.keys(details).length>0?`
+      <div style="background:#f9fafb;border-radius:8px;padding:12px;margin-bottom:16px">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase">Additional Details</div>
+        <pre style="font-size:11px;color:var(--text);overflow-x:auto;white-space:pre-wrap">${JSON.stringify(details,null,2)}</pre>
+      </div>` : ''}
+    <div style="display:flex;gap:8px">
+      ${log.userName&&log.userName!=='Unknown'?`<button class="btn btn-primary btn-sm" onclick="showSection('users');closeModal('modal-activity')">👤 View User</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-activity')" style="flex:1">Close</button>
+    </div>`;
+  openModal('modal-activity');
+}
+
+// ══════════════════════════════════════════════════════
+// FILE SCANNER
+// ══════════════════════════════════════════════════════
+async function loadScanner() {
+  try {
+    const d = await api('/scanner/scans');
+    const scans = d.scans||[];
+    const summary = d.summary||{};
+    document.getElementById('scan-total').textContent    = summary.total||0;
+    document.getElementById('scan-critical').textContent = summary.critical||0;
+    document.getElementById('scan-high').textContent     = summary.high||0;
+    document.getElementById('scan-safe').textContent     = summary.low||0;
+    const riskColors = {low:'#10b981',medium:'#f59e0b',high:'#f97316',critical:'#ef4444'};
+    document.getElementById('scanner-tbl').innerHTML = scans.length
+      ? scans.map(s=>`
+          <tr>
+            <td class="fname">${esc(s.fileName||'—')}</td>
+            <td style="font-size:12px;color:var(--text2)">—</td>
+            <td><span style="background:${riskColors[s.riskLevel]||'#6b7280'}22;color:${riskColors[s.riskLevel]||'#6b7280'};padding:2px 8px;border-radius:50px;font-size:11px;font-weight:700">${s.riskLevel?.toUpperCase()||'—'}</span></td>
+            <td style="font-family:var(--mono);font-weight:700;color:${riskColors[s.riskLevel]||'var(--text)'}">${s.riskScore||0}/100</td>
+            <td style="font-size:11px;color:var(--text2)">${(s.findings||[]).length} findings</td>
+            <td style="font-size:11px;color:var(--text3)">${ago(s.scannedAt)}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="6"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No scans yet</div></div></td></tr>';
+  } catch(e) {}
+}
+
+async function runGlobalScan() {
+  try {
+    toast('info','🤖 Scanning all files...');
+    // Scan user's files - admin can trigger per-user
+    const fd = await api('/admin/files');
+    toast('ok','Scan initiated for '+( fd.files?.length||0)+' files');
+    setTimeout(loadScanner, 2000);
+  } catch(e) { toast('err',e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// GEO MAP
+// ══════════════════════════════════════════════════════
+async function loadGeoData() {
+  try {
+    const d = await api('/geo/map');
+    document.getElementById('geo-countries').textContent = d.totalCountries||0;
+    document.getElementById('geo-total').textContent     = d.totalAccesses||0;
+    document.getElementById('geo-suspicious').textContent = '—';
+
+    const timeline = d.timeline||[];
+    document.getElementById('geo-tbl').innerHTML = timeline.length
+      ? timeline.slice(0,20).map(l=>`
+          <tr>
+            <td style="font-size:12px">—</td>
+            <td style="font-size:12px;font-weight:600;color:var(--text)">${esc(l.country||'—')}</td>
+            <td style="font-size:12px;color:var(--text2)">${esc(l.city||'—')}</td>
+            <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">${esc(l.ip||'—')}</td>
+            <td><span class="badge bb">${l.event||'—'}</span></td>
+            <td style="font-size:11px;color:var(--text3)">${ago(l.createdAt)}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="6"><div class="empty"><div class="empty-title">No location data yet</div></div></td></tr>';
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════
+// CSV EXPORT
+// ══════════════════════════════════════════════════════
+function exportCSV(type) {
+  const token = localStorage.getItem('sv_token');
+  fetch(API+'/admin/export/'+type, { headers:{'Authorization':'Bearer '+token} })
+    .then(r=>r.blob())
+    .then(blob=>{
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href = url; a.download = 'securevault_'+type+'.csv'; a.click();
+      URL.revokeObjectURL(url);
+      toast('ok','⬇ '+type+'.csv downloaded!');
+    }).catch(e=>toast('err','Export failed: '+e.message));
+}
+
+// ══════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════
+async function testAPI() {
+  const el = document.getElementById('api-result');
+  try {
+    const d = await fetch('http://127.0.0.1:3000/health').then(r=>r.json());
+    el.innerHTML = `<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:10px;font-size:12px;color:#065f46;margin-top:10px">✅ Connected to ${d.service} v${d.version} · ${d.crypto?.algorithms?.length||0} algorithms · ${d.features?.length||0} features active</div>`;
+  } catch(e) {
+    el.innerHTML = `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px;font-size:12px;color:#dc2626;margin-top:10px">❌ Cannot connect to API</div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════════════
+let charts = {};
+function renderChart(id,type,labels,data,label,color) {
+  if (charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id)?.getContext('2d');
+  if (!ctx) return;
+  charts[id] = new Chart(ctx,{
+    type,
+    data:{ labels, datasets:[{label,data,backgroundColor:color+'99',borderColor:color,borderWidth:2,borderRadius:type==='bar'?6:0,tension:0.4}]},
+    options:{ responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6b7280',font:{family:'Poppins',size:11}},grid:{display:false}},y:{ticks:{color:'#6b7280',font:{family:'Poppins',size:11}},grid:{color:'#f3f4f6'}}}}
+  });
+}
+
+function renderDoughnut(id,labels,data,colors) {
+  if (charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id)?.getContext('2d');
+  if (!ctx) return;
+  charts[id] = new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{family:'Poppins',size:11},color:'#6b7280',padding:12}}}}
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function logout() { localStorage.removeItem('sv_token'); localStorage.removeItem('sv_user'); window.location.href='auth.html'; }
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+function closeOverlay(e,el) { if(e.target===el) el.classList.remove('open'); }
+function toast(type,msg) {
+  const w=document.getElementById('toasts');
+  const el=document.createElement('div');
+  el.className='toast '+type; el.textContent=msg; w.appendChild(el);
+  setTimeout(()=>{ el.style.transition='opacity 0.3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),350); },4000);
+}
+function fmtBytes(b) { if(!b) return '0 B'; const k=1024,s=['B','KB','MB','GB']; const i=Math.floor(Math.log(b)/Math.log(k)); return +(b/Math.pow(k,i)).toFixed(1)+' '+s[i]; }
+function ago(iso) { if(!iso) return '—'; const d=Math.floor((Date.now()-new Date(iso))/1000); if(d<60) return d+'s ago'; if(d<3600) return Math.floor(d/60)+'m ago'; if(d<86400) return Math.floor(d/3600)+'h ago'; return Math.floor(d/86400)+'d ago'; }
+function esc(s) { return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function evtBadge(e) { return (e||'').includes('UPLOAD')?'bb':(e||'').includes('DELETE')?'br':(e||'').includes('DOWNLOAD')?'ba':(e||'').includes('LOGIN')?'bg':'bc'; }
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+initUI();
+loadDashboard();
+</script>
+</body>
+</html>

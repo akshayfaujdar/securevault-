@@ -1,0 +1,121 @@
+# ═══════════════════════════════════════════════════════
+# SECUREVAULT — DOCKER COMPOSE
+# File: C:\Projects\securevault\docker-compose.yml
+# Run: docker-compose up -d
+# Stop: docker-compose down
+# ═══════════════════════════════════════════════════════
+
+version: '3.8'
+
+services:
+
+  # ── MySQL Database ─────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: securevault-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-Mylove@123}
+      MYSQL_DATABASE: ${DB_NAME:-ciphercloud}
+      MYSQL_USER: securevault
+      MYSQL_PASSWORD: ${DB_PASSWORD:-Mylove@123}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "3306:3306"
+    networks:
+      - securevault-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-Mylove@123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # ── Backend API ────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: securevault-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-ciphercloud}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-Mylove@123}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: 7d
+      EMAIL_SERVICE: ${EMAIL_SERVICE:-gmail}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      PBKDF2_ITERATIONS: 310000
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - securevault-net
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Frontend (Nginx) ───────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: securevault-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+    networks:
+      - securevault-net
+
+  # ── Redis Cache (optional but recommended) ─────────
+  redis:
+    image: redis:7-alpine
+    container_name: securevault-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-securevault123}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - securevault-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+# ── Volumes ────────────────────────────────────────
+volumes:
+  db_data:
+    driver: local
+  uploads_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# ── Networks ───────────────────────────────────────
+networks:
+  securevault-net:
+    driver: bridge
