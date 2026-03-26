@@ -7,6 +7,7 @@ const morgan    = require('morgan');
 const rateLimit = require('express-rate-limit');
 const logger    = require('./utils/logger');
 
+
 const app  = express();
 const PORT = process.env.PORT || 3000;
 const API  = `/api/${process.env.API_VERSION || 'v1'}`;
@@ -44,6 +45,7 @@ app.use(`${API}/orgs`,      require('./routes/organizations'));
 app.use(`${API}/crypto`,     require('./routes/advanced_crypto'));
 app.use(`${API}/notes`,      require('./routes/notes_compliance'));
 app.use(`${API}/compliance`, require('./routes/notes_compliance'));
+app.use(cors());
 
 app.get('/health', (req, res) => res.json({
   status: 'ok', service: 'securevault-api', version: '3.0.0',

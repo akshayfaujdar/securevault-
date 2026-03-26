@@ -590,7 +590,7 @@ tr:hover td{background:#fafafa;color:var(--text)}
             <div class="field">
               <label class="flabel">API Endpoint</label>
               <div style="display:flex;gap:10px">
-                <input class="inp bare" type="text" id="api-url-input" value="http://127.0.0.1:3000/api/v1" style="flex:1"/>
+                <input class="inp bare" type="text" id="api-url-input" value="http://13.233.45.67:3000/api/v1" style="flex:1"/>
                 <button class="btn btn-primary btn-sm" onclick="testAPI()">Test</button>
               </div>
             </div>
@@ -761,7 +761,7 @@ tr:hover td{background:#fafafa;color:var(--text)}
 // SecureVault Dashboard — Complete API Integration
 // ══════════════════════════════════════════════════
 
-const API = 'http://127.0.0.1:3000/api/v1';
+const API = 'http://13.233.45.67:3000/api/v1';
 const S = {
   token : localStorage.getItem('sv_token'),
   user  : JSON.parse(localStorage.getItem('sv_user') || 'null'),
@@ -1409,7 +1409,7 @@ setTimeout(checkStorageQuota, 2000);
 var _co=false,_ch=[],_cl=false;
 function toggleChat(){_co=!_co;var w=document.getElementById('sv-cw');w.style.display=_co?'flex':'none';if(_co){document.getElementById('sv-cn').style.display='none';setTimeout(function(){document.getElementById('sv-ci').focus();},100);}}
 function svAddMsg(r,t){var m=document.getElementById('sv-cm');var w=document.createElement('div');w.style.cssText='display:flex;gap:8px;'+(r==='user'?'flex-direction:row-reverse':'');var a=document.createElement('div');a.style.cssText='width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;color:white;flex-shrink:0;background:'+(r==='user'?'#10b981':'#4f46e5');a.textContent=r==='user'?'U':'AI';var b=document.createElement('div');b.style.cssText='padding:8px 11px;font-size:13px;line-height:1.5;max-width:230px;border-radius:'+(r==='user'?'10px 0 10px 10px':'0 10px 10px 10px')+';background:'+(r==='user'?'#4f46e5':'#f0f4ff')+';color:'+(r==='user'?'white':'#1e1b4b');b.textContent=t;w.appendChild(a);w.appendChild(b);m.appendChild(w);m.scrollTop=m.scrollHeight;}
-async function svSend(){if(_cl)return;var i=document.getElementById('sv-ci');var msg=i.value.trim();if(!msg)return;i.value='';svAddMsg('user',msg);_ch.push({role:'user',content:msg});_cl=true;svAddMsg('bot','Thinking...');try{var r=await fetch('http://127.0.0.1:3000/api/v1/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:'You are SecureVault AI. Help with encryption, file upload, decrypt and sharing. Be concise.',messages:_ch.slice(-8)})});var d=await r.json();var m=document.getElementById('sv-cm');m.removeChild(m.lastChild);var rep=d.reply||d.error||'No response';_ch.push({role:'assistant',content:rep});svAddMsg('bot',rep);}catch(e){var m=document.getElementById('sv-cm');m.removeChild(m.lastChild);svAddMsg('bot','Cannot connect. Make sure server is running.');}  _cl=false;}
+async function svSend(){if(_cl)return;var i=document.getElementById('sv-ci');var msg=i.value.trim();if(!msg)return;i.value='';svAddMsg('user',msg);_ch.push({role:'user',content:msg});_cl=true;svAddMsg('bot','Thinking...');try{var r=await fetch('http://13.233.45.67:3000/api/v1/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:'You are SecureVault AI. Help with encryption, file upload, decrypt and sharing. Be concise.',messages:_ch.slice(-8)})});var d=await r.json();var m=document.getElementById('sv-cm');m.removeChild(m.lastChild);var rep=d.reply||d.error||'No response';_ch.push({role:'assistant',content:rep});svAddMsg('bot',rep);}catch(e){var m=document.getElementById('sv-cm');m.removeChild(m.lastChild);svAddMsg('bot','Cannot connect. Make sure server is running.');}  _cl=false;}
 setTimeout(function(){document.getElementById('sv-cn').style.display='block';},4000);
 </script>
 
