@@ -7,7 +7,7 @@
 
 async function p2g2api(path, opts = {}) {
   const token = localStorage.getItem('sv_token');
-  const res = await fetch('http://127.0.0.1:3000/api/v1' + path, {
+  const res = await fetch('http://13.201.28.4:3000/api/v1' + path, {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, ...(opts.headers||{}) },
     ...opts
   });
@@ -236,7 +236,7 @@ function startRealtime() {
   if (!token || realtimeActive) return;
 
   try {
-    sseConnection = new EventSource('http://127.0.0.1:3000/api/v1/analytics/realtime?token=' + token);
+    sseConnection = new EventSource('http://13.201.28.4:3000/api/v1/analytics/realtime?token=' + token);
 
     sseConnection.onopen = () => {
       realtimeActive = true;

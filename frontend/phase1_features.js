@@ -10,7 +10,7 @@
 // If not, add this:
 async function phase1api(path, opts = {}) {
   const token = localStorage.getItem('sv_token');
-  const res = await fetch('http://127.0.0.1:3000/api/v1' + path, {
+  const res = await fetch('http://13.201.28.4:3000/api/v1' + path, {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
     ...opts
   });
