@@ -496,12 +496,21 @@ async function doLogin(){
   const btn=document.getElementById('btn-li');
   btn.disabled=true;btn.innerHTML='<div class="spin"></div> Signing in...';
   try{
+<<<<<<< HEAD
     const r = await fetch(API + '/auth/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   
   body: JSON.stringify({ email, password: pw })
 });
+=======
+   const r = await fetch(API + '/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password: pw })
+});
+    const d=await r.json();
+>>>>>>> 971b5b22e750c32183434276a423544e58413f9f
     if(!r.ok)throw new Error(d.error||'Login failed');
 
     // Handle 2FA — server returns requireOTP:true
