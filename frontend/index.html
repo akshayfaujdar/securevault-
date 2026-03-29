@@ -776,6 +776,7 @@ const S = {
 
 // ── Guard ─────────────────────────────────────────
 if (!S.token) { window.location.href = 'auth.html'; }
+if (!S.user) { window.location.href = 'auth.html'; }
 
 // ── API helper ────────────────────────────────────
 async function api(path, opts = {}) {
@@ -1330,7 +1331,7 @@ function evtBadge(e) { return (e||'').includes('UPLOAD')?'badge-blue':(e||'').in
 // ── Init ───────────────────────────────────────────
 // ── Guard & Fresh Token Read ─────────────────────────
 S.token = localStorage.getItem('sv_token');
-S.user  = JSON.parse(localStorage.getItem('sv_user') || 'null');
+S.user  = JSON.parse(localStorage.getItem('sv_user') || 'null') || null;
 if (!S.token) { window.location.href = 'auth.html'; }
 if (S.user && S.user.role === 'admin') { window.location.href = 'admin.html'; }
 initUI();
