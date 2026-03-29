@@ -28,8 +28,6 @@ body{
   background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
   display:flex;align-items:center;justify-content:center;min-height:100vh;
 }
-
-/* ── CARD ── */
 .card{
   width:920px;max-width:97vw;height:580px;
   display:grid;grid-template-columns:1fr 420px;
@@ -38,8 +36,6 @@ body{
   animation:card-in 0.5s cubic-bezier(0.4,0,0.2,1) both;
 }
 @keyframes card-in{from{opacity:0;transform:translateY(28px) scale(0.97)}to{opacity:1;transform:none}}
-
-/* ══ LEFT — Illustration ══ */
 .left{
   background:linear-gradient(160deg,#b8c6ff 0%,#a5b4fc 30%,#c4b5fd 70%,#b8c6ff 100%);
   position:relative;overflow:hidden;
@@ -47,24 +43,18 @@ body{
   align-items:center;justify-content:center;
   padding:40px 32px;
 }
-
-/* subtle bg arc */
 .left::before{
   content:'';position:absolute;
   width:360px;height:360px;border-radius:50%;
   background:rgba(255,255,255,0.25);
   top:50%;left:50%;transform:translate(-50%,-52%);
 }
-
-/* sparkle stars */
 .spark{
   position:absolute;color:white;font-size:var(--sz,18px);
   animation:twinkle var(--d,2s) ease-in-out infinite alternate;
   opacity:0.7;
 }
 @keyframes twinkle{from{opacity:0.4;transform:scale(0.8)}to{opacity:1;transform:scale(1.2)}}
-
-/* bottom text */
 .left-bottom{
   position:relative;z-index:2;
   text-align:center;margin-top:20px;
@@ -74,8 +64,6 @@ body{
 .dots{display:flex;gap:8px;justify-content:center;margin-top:14px}
 .dot{height:4px;border-radius:2px;background:rgba(67,56,202,0.3);transition:all 0.3s;width:16px}
 .dot.on{background:#4338ca;width:28px}
-
-/* ══ RIGHT — Form ══ */
 .right{
   background:var(--white);
   padding:40px 38px;
@@ -85,28 +73,19 @@ body{
 }
 .right::-webkit-scrollbar{width:4px}
 .right::-webkit-scrollbar-thumb{background:#e5e7eb;border-radius:2px}
-
-/* Logo */
 .logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
 .logo-box{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4f7cff,#6366f1);display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 4px 12px rgba(79,124,255,0.3)}
 .logo-name{font-size:16px;font-weight:700;color:var(--text)}.logo-name span{color:var(--blue)}
-
-/* Views */
 .view{display:none}
 .view.on{display:flex;flex-direction:column;animation:slide-in 0.28s ease both}
 @keyframes slide-in{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
-
 .vtitle{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.4px;margin-bottom:3px}
 .vsub{font-size:13px;color:var(--text2);margin-bottom:20px}
 .vsub a{color:var(--blue);cursor:pointer;font-weight:600;text-decoration:none}
 .vsub a:hover{color:var(--blue2)}
-
-/* Alert */
 .alert{padding:10px 14px;border-radius:10px;font-size:12px;font-weight:500;margin-bottom:14px;display:none}
 .alert.err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626}
 .alert.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
-
-/* Fields */
 .field{margin-bottom:14px}
 .flabel{font-size:11px;font-weight:700;color:var(--text);letter-spacing:0.3px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
 .flabel a{font-size:11px;color:var(--blue);cursor:pointer;font-weight:500}
@@ -119,72 +98,47 @@ body{
 .pw-btn{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);padding:4px;display:flex;transition:color 0.2s}
 .pw-btn:hover{color:var(--text2)}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-
-/* Strength */
 .str{margin-top:6px;display:none}
 .str.on{display:block}
 .s-bars{display:flex;gap:4px;margin-bottom:3px}
 .s-bar{height:3px;flex:1;border-radius:2px;background:var(--border);transition:background 0.3s}
 .s-bar.w{background:#ef4444}.s-bar.f{background:#f59e0b}.s-bar.g{background:var(--blue)}.s-bar.s{background:var(--green)}
 .s-lbl{font-size:10px;color:var(--text3)}
-
-/* Check */
 .chk-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
 .chk{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:all 0.2s;flex-shrink:0}
 .chk.on{background:var(--blue);border-color:var(--blue);color:white}
 .chk-lbl{font-size:12px;color:var(--text2)}.chk-lbl a{color:var(--blue);cursor:pointer}
-
-/* Button */
 .btn{width:100%;padding:12px;border-radius:50px;background:linear-gradient(135deg,#4f7cff,#6366f1);color:white;font-family:var(--font);font-size:14px;font-weight:700;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 6px 20px rgba(79,124,255,0.4);transition:all 0.2s;margin-bottom:14px}
 .btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(79,124,255,0.5)}
 .btn:disabled{opacity:0.55;cursor:not-allowed;transform:none}
 .btn-arr{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center}
-
-/* Divider */
 .div{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text3);margin-bottom:14px}
 .div::before,.div::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* Socials */
 .socs{display:flex;gap:10px;margin-bottom:16px}
 .soc{flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:white;display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all 0.2s}
 .soc:hover{border-color:#c7d2fe;background:#f5f3ff;color:var(--text)}
 .soc svg{width:17px;height:17px;flex-shrink:0}
-
-/* Back */
 .back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;font-family:var(--font);font-size:13px;color:var(--text2);cursor:pointer;padding:0;margin-bottom:16px;transition:color 0.2s}
 .back-btn:hover{color:var(--text)}
-
-/* OTP */
 .otp-row{display:flex;gap:8px;margin-bottom:20px}
 .otp{width:100%;aspect-ratio:1;text-align:center;font-size:20px;font-weight:700;background:#f9fafb;border:1.5px solid var(--border);border-radius:10px;color:var(--text);outline:none;transition:all 0.2s;font-family:var(--font)}
 .otp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,124,255,0.1)}
-
-/* Note */
 .note{padding:10px 14px;border-radius:10px;font-size:11px;line-height:1.6;margin-bottom:14px;background:#fef3c7;border:1px solid #fde68a;color:#92400e}
-
-/* Spinner */
 .spin{width:14px;height:14px;border:2.5px solid rgba(255,255,255,0.35);border-top-color:white;border-radius:50%;animation:rot 0.7s linear infinite}
 @keyframes rot{to{transform:rotate(360deg)}}
-
-/* Toast */
 .toasts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;display:flex;flex-direction:column;align-items:center;gap:8px}
 .toast{padding:10px 22px;border-radius:50px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.12);animation:tin 0.3s ease;white-space:nowrap}
 .toast.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
 .toast.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
 .toast.info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
 @keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
 @media(max-width:680px){.card{grid-template-columns:1fr;height:auto}.left{display:none}.right{padding:28px 22px}}
 </style>
 </head>
 <body>
 
 <div class="card">
-
-  <!-- ══ LEFT — Illustration ══ -->
   <div class="left">
-
-    <!-- Sparkle stars like reference image -->
     <div class="spark" style="top:10%;left:12%;--sz:22px;--d:2s">✦</div>
     <div class="spark" style="top:15%;left:55%;--sz:16px;--d:3s">✦</div>
     <div class="spark" style="top:8%;right:14%;--sz:20px;--d:2.5s">✦</div>
@@ -193,98 +147,57 @@ body{
     <div class="spark" style="top:75%;left:8%;--sz:16px;--d:3.2s">✦</div>
     <div class="spark" style="top:55%;left:6%;--sz:12px;--d:2.8s">✦</div>
     <div class="spark" style="top:28%;left:8%;--sz:14px;--d:1.5s">✦</div>
-
-    <!-- SVG Illustration matching reference: laptop + phone with charts -->
     <div style="position:relative;z-index:2;width:100%;display:flex;align-items:center;justify-content:center">
       <svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" style="width:88%;max-width:380px">
-
-        <!-- Ground line -->
         <line x1="20" y1="248" x2="380" y2="248" stroke="#5c6bc0" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-
-        <!-- ── PHONE (left) ── -->
-        <!-- Phone body -->
         <rect x="62" y="108" width="82" height="138" rx="10" fill="#e8eeff" stroke="#5c6bc0" stroke-width="2"/>
-        <!-- Phone screen -->
         <rect x="68" y="118" width="70" height="112" rx="6" fill="white"/>
-        <!-- Phone notch -->
         <rect x="95" y="111" width="16" height="5" rx="2.5" fill="#5c6bc0" opacity="0.5"/>
-        <!-- Phone home button -->
         <rect x="97" y="237" width="12" height="4" rx="2" fill="#5c6bc0" opacity="0.4"/>
-
-        <!-- Phone screen content: bar chart -->
         <rect x="72" y="122" width="62" height="6" rx="2" fill="#c7d2fe" opacity="0.7"/>
         <rect x="72" y="131" width="45" height="3" rx="1.5" fill="#e0e7ff" opacity="0.8"/>
         <rect x="72" y="137" width="52" height="3" rx="1.5" fill="#e0e7ff" opacity="0.6"/>
-
-        <!-- Bar chart on phone -->
-        <rect x="74" y="185" width="9"  height="35" rx="2" fill="#818cf8" opacity="0.8"/>
-        <rect x="86" y="178" width="9"  height="42" rx="2" fill="#6366f1" opacity="0.9"/>
-        <rect x="98" y="172" width="9"  height="48" rx="2" fill="#4f46e5" opacity="0.9"/>
+        <rect x="74" y="185" width="9" height="35" rx="2" fill="#818cf8" opacity="0.8"/>
+        <rect x="86" y="178" width="9" height="42" rx="2" fill="#6366f1" opacity="0.9"/>
+        <rect x="98" y="172" width="9" height="48" rx="2" fill="#4f46e5" opacity="0.9"/>
         <rect x="110" y="180" width="9" height="40" rx="2" fill="#818cf8" opacity="0.8"/>
         <rect x="122" y="168" width="9" height="52" rx="2" fill="#6366f1" opacity="0.9"/>
-
-        <!-- Lines on phone below chart -->
         <rect x="72" y="224" width="55" height="3" rx="1.5" fill="#e0e7ff" opacity="0.8"/>
         <rect x="72" y="229" width="40" height="3" rx="1.5" fill="#e0e7ff" opacity="0.6"/>
-
-        <!-- ── LAPTOP ── -->
-        <!-- Laptop base/keyboard -->
         <path d="M155 240 Q155 244 160 246 L320 246 Q325 244 325 240 Z" fill="#b8c4f0" stroke="#5c6bc0" stroke-width="1.5"/>
         <rect x="190" y="243" width="50" height="3" rx="1.5" fill="#9ba8d8" opacity="0.6"/>
-
-        <!-- Laptop hinge -->
         <rect x="158" y="237" width="164" height="4" rx="2" fill="#a0aee0"/>
-
-        <!-- Laptop screen outer -->
         <rect x="162" y="82" width="156" height="158" rx="8" fill="#c8d4f8" stroke="#5c6bc0" stroke-width="2"/>
-        <!-- Laptop screen inner (display) -->
         <rect x="168" y="88" width="144" height="146" rx="5" fill="white"/>
-        <!-- Laptop camera dot -->
         <circle cx="240" cy="85" r="2.5" fill="#5c6bc0" opacity="0.5"/>
-
-        <!-- Browser window on screen -->
         <rect x="172" y="92" width="136" height="138" rx="4" fill="#f0f4ff"/>
-        <!-- Browser top bar -->
         <rect x="172" y="92" width="136" height="16" rx="4" fill="#e8eeff"/>
         <circle cx="180" cy="100" r="3" fill="#ff9999" opacity="0.8"/>
         <circle cx="189" cy="100" r="3" fill="#ffcc99" opacity="0.8"/>
         <circle cx="198" cy="100" r="3" fill="#99ff99" opacity="0.8"/>
         <rect x="206" y="96" width="70" height="7" rx="3" fill="white" opacity="0.8"/>
-
-        <!-- Pie chart -->
         <circle cx="205" cy="133" r="20" fill="none" stroke="#e0e7ff" stroke-width="2"/>
-        <!-- Pie segments -->
         <path d="M205 133 L205 113 A20 20 0 0 1 221 146 Z" fill="#6366f1" opacity="0.85"/>
         <path d="M205 133 L221 146 A20 20 0 0 1 185 142 Z" fill="#818cf8" opacity="0.8"/>
         <path d="M205 133 L185 142 A20 20 0 0 1 205 113 Z" fill="#c7d2fe" opacity="0.9"/>
-
-        <!-- Line chart -->
         <polyline points="230,150 242,138 254,142 266,128 278,132 290,118 302,124" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- Line chart dots -->
         <circle cx="230" cy="150" r="3" fill="#6366f1"/>
         <circle cx="254" cy="142" r="3" fill="#6366f1"/>
         <circle cx="278" cy="132" r="3" fill="#6366f1"/>
         <circle cx="302" cy="124" r="3" fill="#6366f1"/>
-
-        <!-- Bar chart on laptop screen -->
-        <rect x="232" y="158" width="9"  height="38" rx="2" fill="#c7d2fe" opacity="0.9"/>
-        <rect x="244" y="152" width="9"  height="44" rx="2" fill="#818cf8" opacity="0.9"/>
-        <rect x="256" y="162" width="9"  height="34" rx="2" fill="#c7d2fe" opacity="0.9"/>
-        <rect x="268" y="148" width="9"  height="48" rx="2" fill="#6366f1" opacity="0.9"/>
-        <rect x="280" y="156" width="9"  height="40" rx="2" fill="#818cf8" opacity="0.9"/>
-        <rect x="292" y="145" width="9"  height="51" rx="2" fill="#6366f1" opacity="0.9"/>
-
-        <!-- Notification popup top right of screen (like reference) -->
+        <rect x="232" y="158" width="9" height="38" rx="2" fill="#c7d2fe" opacity="0.9"/>
+        <rect x="244" y="152" width="9" height="44" rx="2" fill="#818cf8" opacity="0.9"/>
+        <rect x="256" y="162" width="9" height="34" rx="2" fill="#c7d2fe" opacity="0.9"/>
+        <rect x="268" y="148" width="9" height="48" rx="2" fill="#6366f1" opacity="0.9"/>
+        <rect x="280" y="156" width="9" height="40" rx="2" fill="#818cf8" opacity="0.9"/>
+        <rect x="292" y="145" width="9" height="51" rx="2" fill="#6366f1" opacity="0.9"/>
         <rect x="282" y="94" width="56" height="28" rx="5" fill="white" stroke="#c7d2fe" stroke-width="1"/>
         <rect x="287" y="99" width="30" height="3" rx="1.5" fill="#818cf8" opacity="0.8"/>
         <rect x="287" y="105" width="44" height="2.5" rx="1.25" fill="#c7d2fe" opacity="0.7"/>
         <rect x="287" y="110" width="36" height="2.5" rx="1.25" fill="#c7d2fe" opacity="0.6"/>
         <rect x="287" y="115" width="40" height="2.5" rx="1.25" fill="#c7d2fe" opacity="0.5"/>
-
       </svg>
     </div>
-
-    <!-- Bottom text -->
     <div class="left-bottom">
       <div class="left-title">Encrypt. Store.<br>Share Securely.</div>
       <div class="left-desc">AES-256 + Triple-DES + Blowfish hybrid encryption with LSB steganography key protection.</div>
@@ -296,14 +209,13 @@ body{
     </div>
   </div>
 
-  <!-- ══ RIGHT — Form ══ -->
   <div class="right">
     <div class="logo">
       <div class="logo-box">🔐</div>
       <span class="logo-name">Secure<span>Vault</span></span>
     </div>
 
-    <!-- ── LOGIN ── -->
+    <!-- LOGIN -->
     <div class="view on" id="v-login">
       <div class="vtitle">Welcome back</div>
       <div class="vsub">Don't have an account? <a onclick="go('signup')">Sign up free →</a></div>
@@ -348,7 +260,7 @@ body{
       </div>
     </div>
 
-    <!-- ── SIGNUP ── -->
+    <!-- SIGNUP -->
     <div class="view" id="v-signup">
       <div class="vtitle">Create account</div>
       <div class="vsub">Already registered? <a onclick="go('login')">Log in here</a></div>
@@ -385,7 +297,7 @@ body{
       </div>
     </div>
 
-    <!-- ── FORGOT ── -->
+    <!-- FORGOT -->
     <div class="view" id="v-forgot">
       <button class="back-btn" onclick="go('login')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to login</button>
       <div class="vtitle">Forgot Password?</div>
@@ -401,7 +313,7 @@ body{
       <div style="text-align:center;font-size:12px;color:var(--text2)">Remember it? <a style="color:var(--blue);cursor:pointer;font-weight:600" onclick="go('login')">Back to login</a></div>
     </div>
 
-    <!-- ── 2FA VERIFICATION ── -->
+    <!-- 2FA -->
     <div class="view" id="v-twofa">
       <button class="back-btn" onclick="go('login')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to login</button>
       <div class="vtitle">Two-Factor Auth</div>
@@ -421,23 +333,7 @@ body{
       <div style="text-align:center;font-size:12px;color:var(--text2);margin-top:12px">Didn't get it? <a style="color:var(--blue);cursor:pointer;font-weight:600" onclick="doLogin()">Resend OTP</a></div>
     </div>
 
-    <!-- ── OTP (password reset) ── -->
-    <div class="view" id="v-otp">
-      <button class="back-btn" onclick="go('forgot')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
-      <div class="vtitle">Check your email</div>
-      <div class="vsub" style="margin-bottom:22px">6-digit code sent to <strong id="otp-em" style="color:var(--blue)">your email</strong></div>
-      <div class="otp-row">
-        <input class="otp" maxlength="1" type="text" inputmode="numeric" onkeyup="onav(this,0)"/>
-        <input class="otp" maxlength="1" type="text" inputmode="numeric" onkeyup="onav(this,1)"/>
-        <input class="otp" maxlength="1" type="text" inputmode="numeric" onkeyup="onav(this,2)"/>
-        <input class="otp" maxlength="1" type="text" inputmode="numeric" onkeyup="onav(this,3)"/>
-        <input class="otp" maxlength="1" type="text" inputmode="numeric" onkeyup="onav(this,4)"/>
-        <input class="otp" maxlength="1" type="text" inputmode="numeric" onkeyup="onav(this,5)"/>
-      </div>
-      <button class="btn" onclick="vOTP()">Verify Code <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div></button>
-      <div style="text-align:center;font-size:12px;color:var(--text2)">Didn't get it? <a style="color:var(--blue);cursor:pointer;font-weight:600" onclick="doForgot()">Resend</a></div>
-    
-    <!-- ── RESET PASSWORD ── -->
+    <!-- RESET PASSWORD -->
     <div class="view" id="v-reset">
       <div class="vtitle">Set New Password</div>
       <div class="vsub" style="margin-bottom:20px">Enter your new secure password below</div>
@@ -474,213 +370,218 @@ body{
 <div class="toasts" id="toasts"></div>
 
 <script>
-const API='http://13.201.28.4:3000/api/v1';
+const API = 'http://13.201.28.4:3000/api/v1';
 
-function go(v){
-  document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));
-  document.getElementById('v-'+v).classList.add('on');
-  document.querySelectorAll('.alert').forEach(a=>{a.style.display='none';a.textContent='';});
+function go(v) {
+  document.querySelectorAll('.view').forEach(e => e.classList.remove('on'));
+  document.getElementById('v-' + v).classList.add('on');
+  document.querySelectorAll('.alert').forEach(a => { a.style.display = 'none'; a.textContent = ''; });
 }
 
-function showErr(id,msg){const e=document.getElementById(id);if(e){e.textContent='⚠ '+msg;e.style.display='block';}}
-function showOk(id){const e=document.getElementById(id);if(e)e.style.display='block';}
+function showErr(id, msg) { const e = document.getElementById(id); if (e) { e.textContent = '⚠ ' + msg; e.style.display = 'block'; } }
+function showOk(id) { const e = document.getElementById(id); if (e) e.style.display = 'block'; }
 
-// Store userId for 2FA verification step
 let _2faUserId = null;
 
-async function doLogin(){
-  const email=document.getElementById('li-email').value.trim();
-  const pw=document.getElementById('li-pw').value;
-  document.querySelectorAll('.alert').forEach(a=>{a.style.display='none'});
-  if(!email||!pw)return showErr('li-err','Please enter your email and password');
-  const btn=document.getElementById('btn-li');
-  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Signing in...';
-  try{
-<<<<<<< HEAD
+async function doLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pw = document.getElementById('li-pw').value;
+  document.querySelectorAll('.alert').forEach(a => { a.style.display = 'none'; });
+  if (!email || !pw) return showErr('li-err', 'Please enter your email and password');
+  const btn = document.getElementById('btn-li');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> Signing in...';
+  try {
     const r = await fetch(API + '/auth/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  
-  body: JSON.stringify({ email, password: pw })
-});
-=======
-   const r = await fetch(API + '/auth/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password: pw })
-});
-    const d=await r.json();
->>>>>>> 971b5b22e750c32183434276a423544e58413f9f
-    if(!r.ok)throw new Error(d.error||'Login failed');
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pw })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Login failed');
 
-    // Handle 2FA — server returns requireOTP:true
-    if(d.requireOTP){
+    if (d.requireOTP) {
       _2faUserId = d.userId;
-      btn.disabled=false;
-      btn.innerHTML='Sign In <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
+      btn.disabled = false;
+      btn.innerHTML = 'Sign In <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
       go('twofa');
-      document.getElementById('otp-em').textContent=email;
-      toast('info','📧 OTP sent to your email — check your inbox!');
+      document.getElementById('otp-em').textContent = email;
+      toast('info', '📧 OTP sent to your email — check your inbox!');
       return;
     }
 
-    // Normal login
     finishLogin(d);
-  }catch(e){
-    showErr('li-err',e.message);
-    btn.disabled=false;
-    btn.innerHTML='Sign In <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
+  } catch (e) {
+    showErr('li-err', e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Sign In <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
   }
 }
 
-function finishLogin(d){
-  localStorage.setItem('sv_token',d.accessToken);
-  localStorage.setItem('sv_user',JSON.stringify(d.user));
-  toast('ok','🔐 Welcome back, '+d.user.name+'!');
-  setTimeout(()=>{
-    window.location.href = d.user.role==='admin' ? 'admin.html' : 'index.html';
-  },1200);
+function finishLogin(d) {
+  const user = d.user || {};
+  localStorage.setItem('sv_token', d.accessToken);
+  localStorage.setItem('sv_user', JSON.stringify(user));
+  toast('ok', '🔐 Welcome back, ' + (user.name || 'User') + '!');
+  setTimeout(() => {
+    window.location.href = user.role === 'admin' ? 'admin.html' : 'index.html';
+  }, 1200);
 }
 
-async function doSignup(){
-  const fn=document.getElementById('su-fn').value.trim();
-  const ln=document.getElementById('su-ln').value.trim();
-  const email=document.getElementById('su-email').value.trim();
-  const pw=document.getElementById('su-pw').value;
-  const agree=document.getElementById('su-agree').classList.contains('on');
-  document.querySelectorAll('.alert').forEach(a=>{a.style.display='none'});
-  if(!fn||!email||!pw)return showErr('su-err','Please fill in all required fields');
-  if(pw.length<12)return showErr('su-err','Password must be at least 12 characters');
-  if(!agree)return showErr('su-err','Please agree to the Terms & Conditions');
-  const btn=document.getElementById('btn-su');
-  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Creating...';
-  try{
-    const r=await fetch(API+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:(fn+' '+ln).trim(),email,password:pw})});
-    const d=await r.json();
-    if(!r.ok)throw new Error(d.error||'Registration failed');
-    localStorage.setItem('sv_token',d.accessToken);
-    localStorage.setItem('sv_user',JSON.stringify(d.user));
-    toast('ok','✓ Account created! Welcome, '+fn+'!');
-    setTimeout(()=>window.location.href='index.html',1200);
-  }catch(e){
-    showErr('su-err',e.message);
-    btn.disabled=false;
-    btn.innerHTML='Create Account <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
+async function doSignup() {
+  const fn = document.getElementById('su-fn').value.trim();
+  const ln = document.getElementById('su-ln').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pw = document.getElementById('su-pw').value;
+  const agree = document.getElementById('su-agree').classList.contains('on');
+  document.querySelectorAll('.alert').forEach(a => { a.style.display = 'none'; });
+  if (!fn || !email || !pw) return showErr('su-err', 'Please fill in all required fields');
+  if (pw.length < 12) return showErr('su-err', 'Password must be at least 12 characters');
+  if (!agree) return showErr('su-err', 'Please agree to the Terms & Conditions');
+  const btn = document.getElementById('btn-su');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> Creating...';
+  try {
+    const r = await fetch(API + '/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: (fn + ' ' + ln).trim(), email, password: pw }) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Registration failed');
+    localStorage.setItem('sv_token', d.accessToken);
+    localStorage.setItem('sv_user', JSON.stringify(d.user || {}));
+    toast('ok', '✓ Account created! Welcome, ' + fn + '!');
+    setTimeout(() => window.location.href = 'index.html', 1200);
+  } catch (e) {
+    showErr('su-err', e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Create Account <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
   }
 }
 
-async function doForgot(){
-  const email=document.getElementById('fp-email').value.trim();
-  document.querySelectorAll('.alert').forEach(a=>{a.style.display='none'});
-  if(!email)return showErr('fp-err','Please enter your email address');
-  const btn=document.getElementById('btn-fp');
-  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Sending...';
-  try{
-    const r=await fetch(API+'/auth/forgot-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
-    const d=await r.json();
+async function doForgot() {
+  const email = document.getElementById('fp-email').value.trim();
+  document.querySelectorAll('.alert').forEach(a => { a.style.display = 'none'; });
+  if (!email) return showErr('fp-err', 'Please enter your email address');
+  const btn = document.getElementById('btn-fp');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> Sending...';
+  try {
+    const r = await fetch(API + '/auth/forgot-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
     showOk('fp-ok');
-    toast('ok','📧 Password reset link sent! Check your email.');
-  }catch(e){
-    showErr('fp-err',e.message||'Failed to send reset email');
-  }finally{
-    btn.disabled=false;
-    btn.innerHTML='Send Reset Link <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
+    toast('ok', '📧 Password reset link sent! Check your email.');
+  } catch (e) {
+    showErr('fp-err', e.message || 'Failed to send reset email');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Send Reset Link <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
   }
 }
 
-function onav(el,idx){el.value=el.value.replace(/\D/g,'');if(el.value&&idx<5)document.querySelectorAll('.otp')[idx+1]?.focus();}
-async function vOTP(){
-  const c=[...document.querySelectorAll('.otp')].map(i=>i.value).join('');
-  if(c.length<6)return toast('err','Enter all 6 digits');
-  if(!_2faUserId)return toast('err','Session expired. Please login again');
-  const btn=document.querySelector('#v-twofa .btn');
-  if(btn){btn.disabled=true;btn.innerHTML='<div class="spin"></div> Verifying...';}
-  try{
-    const r=await fetch(API+'/auth/verify-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:_2faUserId,otp:c})});
-    const d=await r.json();
-    if(!r.ok)throw new Error(d.error||'Invalid OTP');
-    toast('ok','✅ 2FA verified! Logging you in...');
-    _2faUserId=null;
+function onav(el, idx) { el.value = el.value.replace(/\D/g, ''); if (el.value && idx < 5) document.querySelectorAll('.otp')[idx + 1]?.focus(); }
+
+async function vOTP() {
+  const c = [...document.querySelectorAll('.otp')].map(i => i.value).join('');
+  if (c.length < 6) return toast('err', 'Enter all 6 digits');
+  if (!_2faUserId) return toast('err', 'Session expired. Please login again');
+  const btn = document.querySelector('#v-twofa .btn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spin"></div> Verifying...'; }
+  try {
+    const r = await fetch(API + '/auth/verify-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: _2faUserId, otp: c }) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Invalid OTP');
+    toast('ok', '✅ 2FA verified! Logging you in...');
+    _2faUserId = null;
     finishLogin(d);
-  }catch(e){
-    toast('err',e.message);
-    document.querySelectorAll('.otp').forEach(i=>i.value='');
+  } catch (e) {
+    toast('err', e.message);
+    document.querySelectorAll('.otp').forEach(i => i.value = '');
     document.querySelectorAll('.otp')[0]?.focus();
-  }finally{
-    if(btn){btn.disabled=false;btn.innerHTML='Verify Code <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';}
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Verify Code <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>'; }
   }
 }
 
-function tpw(id,btn){
-  const inp=document.getElementById(id);const show=inp.type==='text';inp.type=show?'password':'text';
-  btn.innerHTML=show?'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>':'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+function tpw(id, btn) {
+  const inp = document.getElementById(id);
+  const show = inp.type === 'text';
+  inp.type = show ? 'password' : 'text';
+  btn.innerHTML = show ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
 }
 
-function chkStr(inp){
-  const pw=inp.value;const el=document.getElementById('str');el.classList.toggle('on',pw.length>0);
-  let s=0;if(pw.length>=8)s++;if(pw.length>=12)s++;if(/[A-Z]/.test(pw)&&/[a-z]/.test(pw))s++;if(/\d/.test(pw)&&/[^a-zA-Z\d]/.test(pw))s++;
-  const cls=s<=1?'w':s<=2?'f':s<=3?'g':'s';const lbl=s<=1?'Weak':s<=2?'Fair':s<=3?'Good':'Strong ✓';const clr={w:'#ef4444',f:'#f59e0b',g:'#4f7cff',s:'#10b981'};
-  ['sb1','sb2','sb3','sb4'].forEach((id,i)=>{const b=document.getElementById(id);b.className='s-bar'+(i<s?' '+cls:'');});
-  const l=document.getElementById('slbl');l.textContent=lbl+' password';l.style.color=clr[cls];
+function chkStr(inp) {
+  const pw = inp.value;
+  const el = document.getElementById('str');
+  el.classList.toggle('on', pw.length > 0);
+  let s = 0;
+  if (pw.length >= 8) s++;
+  if (pw.length >= 12) s++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
+  if (/\d/.test(pw) && /[^a-zA-Z\d]/.test(pw)) s++;
+  const cls = s <= 1 ? 'w' : s <= 2 ? 'f' : s <= 3 ? 'g' : 's';
+  const lbl = s <= 1 ? 'Weak' : s <= 2 ? 'Fair' : s <= 3 ? 'Good' : 'Strong ✓';
+  const clr = { w: '#ef4444', f: '#f59e0b', g: '#4f7cff', s: '#10b981' };
+  ['sb1', 'sb2', 'sb3', 'sb4'].forEach((id, i) => { const b = document.getElementById(id); b.className = 's-bar' + (i < s ? ' ' + cls : ''); });
+  const l = document.getElementById('slbl');
+  l.textContent = lbl + ' password';
+  l.style.color = clr[cls];
 }
 
-document.getElementById('li-pw').addEventListener('keydown',e=>e.key==='Enter'&&doLogin());
-document.getElementById('fp-email').addEventListener('keydown',e=>e.key==='Enter'&&doForgot());
+document.getElementById('li-pw').addEventListener('keydown', e => e.key === 'Enter' && doLogin());
+document.getElementById('fp-email').addEventListener('keydown', e => e.key === 'Enter' && doForgot());
 
-// ── PASSWORD RESET ────────────────────────────────────
 let _resetToken = null;
 
-async function doResetPassword(){
-  const pw  = document.getElementById('rp-pw').value;
+async function doResetPassword() {
+  const pw = document.getElementById('rp-pw').value;
   const pw2 = document.getElementById('rp-pw2').value;
-  document.querySelectorAll('.alert').forEach(a=>{a.style.display='none'});
-  if(pw.length<12)return showAlert('rp-err','Password must be at least 12 characters');
-  if(pw!==pw2)    return showAlert('rp-err','Passwords do not match');
-  if(!_resetToken)return showAlert('rp-err','Invalid reset link. Please request a new one');
-  const btn=document.getElementById('btn-rp');
-  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Resetting...';
-  try{
-    const r=await fetch(API+'/auth/reset-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:_resetToken,newPassword:pw})});
-    const d=await r.json();
-    if(!r.ok)throw new Error(d.error||'Reset failed');
-    showAlert('rp-ok','');
-    document.getElementById('rp-ok').style.display='block';
-    toast('ok','✅ Password reset successfully!');
-    _resetToken=null;
-    setTimeout(()=>go('login'),2500);
-  }catch(e){
-    showAlert('rp-err',e.message);
-  }finally{
-    btn.disabled=false;
-    btn.innerHTML='Set New Password <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
+  document.querySelectorAll('.alert').forEach(a => { a.style.display = 'none'; });
+  if (pw.length < 12) return showAlert('rp-err', 'Password must be at least 12 characters');
+  if (pw !== pw2) return showAlert('rp-err', 'Passwords do not match');
+  if (!_resetToken) return showAlert('rp-err', 'Invalid reset link. Please request a new one');
+  const btn = document.getElementById('btn-rp');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin"></div> Resetting...';
+  try {
+    const r = await fetch(API + '/auth/reset-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: _resetToken, newPassword: pw }) });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Reset failed');
+    document.getElementById('rp-ok').style.display = 'block';
+    toast('ok', '✅ Password reset successfully!');
+    _resetToken = null;
+    setTimeout(() => go('login'), 2500);
+  } catch (e) {
+    showAlert('rp-err', e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Set New Password <div class="btn-arr"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>';
   }
 }
 
-function showAlert(id,msg){
-  const el=document.getElementById(id);
-  if(!el)return;
-  if(msg)el.textContent='⚠ '+msg;
-  el.style.display='block';
+function showAlert(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (msg) el.textContent = '⚠ ' + msg;
+  el.style.display = 'block';
 }
 
-// ── Check URL for reset token ─────────────────────────
-(function checkResetToken(){
+(function checkResetToken() {
   const params = new URLSearchParams(window.location.search);
-  const token  = params.get('reset');
-  if(token){
+  const token = params.get('reset');
+  if (token) {
     _resetToken = token;
     go('reset');
-    toast('info','🔑 Enter your new password below');
+    toast('info', '🔑 Enter your new password below');
   }
 })();
 
-let d=0;
-setInterval(()=>{['d0','d1','d2'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',i===d));d=(d+1)%3;},3000);
+let d = 0;
+setInterval(() => { ['d0', 'd1', 'd2'].forEach((id, i) => document.getElementById(id).classList.toggle('on', i === d)); d = (d + 1) % 3; }, 3000);
 
-function toast(type,msg){
-  const w=document.getElementById('toasts');const el=document.createElement('div');
-  el.className='toast '+type;el.textContent=msg;w.appendChild(el);
-  setTimeout(()=>{el.style.transition='opacity 0.3s';el.style.opacity='0';setTimeout(()=>el.remove(),350);},3500);
+function toast(type, msg) {
+  const w = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  w.appendChild(el);
+  setTimeout(() => { el.style.transition = 'opacity 0.3s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 350); }, 3500);
 }
 </script>
 </body>
