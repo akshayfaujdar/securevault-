@@ -7,7 +7,7 @@
 
 async function upApi(path, opts={}) {
   const token = localStorage.getItem('sv_token');
-  const res = await fetch('http://13.232.118.157:3000/api/v1' + path, {
+  const res = await fetch('http://13.206.106.203:3000/api/v1' + path, {
     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token, ...(opts.headers||{}) },
     ...opts
   });
